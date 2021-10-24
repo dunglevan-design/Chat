@@ -2,7 +2,9 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { VscThreeBars } from "react-icons/vsc";
 import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
+import Icons from "../../images/svg-defs.svg";
+
 export const SidebarContainer = styled(motion.nav)<{ isopen: boolean }>`
   position: fixed;
   display: flex;
@@ -78,28 +80,43 @@ export const SidebarMenuitem = styled(motion.li)`
   border: none;
   outline: none;
   border-radius: 10px;
-  transition: background-color 0.2s ease-in;
+  background-size: 500%;
+  background-position: left;
+  background-image: linear-gradient(92.68deg, white 50%, #2A8BF2 100%);
+  transition: background-position 1s ease-out;
 `;
 
 export const Sidebarbutton = styled(Link)<{ full: boolean }>`
-  transition: all 1s ease-in;
   cursor: pointer;
   display: flex;
   align-items: center;
   width: 173px;
 `;
-export const Icon = styled.img<{ full: boolean }>`
+export const Iconsvg = styled.svg`
+  transition: fill 0.5s ease-in;
   margin-right: 1rem;
   width: 18px;
   height: 18px;
-  color: #707c97;
+  color: black;
+  fill: black;
 `;
 export const Label = styled(motion.label)`
-  color: #707c97;
+  transition: color 0.5s ease-in;
+  color: black;
   cursor: pointer;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
 `;
+
+export const Icon = ({ name }: { name: string }) => {
+  return (
+    <Iconsvg
+      className={`icon icon-${name}`}
+    >
+      <use xlinkHref={`${Icons}#icon-${name}`} />
+    </Iconsvg>
+  );
+};
 export const SidebarButton = ({
   full,
   to,
@@ -120,8 +137,8 @@ export const SidebarButton = ({
   return (
     <>
       <Sidebarbutton full={full} to={to}>
-        <Icon full={full} src={icon}></Icon>
-        <Label variants={labelvariants} animate={full ? `open` : `closed`}>
+        <Icon name={icon}></Icon>
+        <Label className = "label" variants={labelvariants} animate={full ? `open` : `closed`}>
           {label}
         </Label>
       </Sidebarbutton>
@@ -129,33 +146,44 @@ export const SidebarButton = ({
   );
 };
 
-export const SidebarMenuItem = ({ isopen, to, label, icon }: { isopen: boolean, to: string, label: string, icon: string }) => {
+export const SidebarMenuItem = ({
+  isopen,
+  to,
+  label,
+  icon,
+}: {
+  isopen: boolean;
+  to: string;
+  label: string;
+  icon: string;
+}) => {
   const CurrentItem = useRef(null);
   const ToggleActive = () => {
     const ActiveItem = document.querySelector(".sidebar__menu__item.active");
     console.log(ActiveItem);
-    if(ActiveItem === CurrentItem.current) {
+    if (ActiveItem === CurrentItem.current) {
       console.log("equals");
       return;
     }
     CurrentItem.current.classList.add("active");
     ActiveItem?.classList?.remove("active");
-  }
-  
+  };
+
   const buttonanimation = {
     initial: { width: "38px" },
-    open: { width: "183px" , transition: {duration: 0.6}},
-    closed: { width: "37px", transition: {duration: 0.6} },
+    open: { width: "183px", transition: { duration: 0.6 } },
+    closed: { width: "37px", transition: { duration: 0.6 } },
   };
 
   return (
-    <SidebarMenuitem ref = {CurrentItem} className = "sidebar__menu__item" variants={buttonanimation} animate = {isopen ? "open" : "closed"} onClick={ToggleActive}>
-      <SidebarButton
-        full={isopen}
-        to={to}
-        label={label}
-        icon={icon}
-      />
+    <SidebarMenuitem
+      ref={CurrentItem}
+      className="sidebar__menu__item"
+      variants={buttonanimation}
+      animate={isopen ? "open" : "closed"}
+      onClick={ToggleActive}
+    >
+      <SidebarButton full={isopen} to={to} label={label} icon={icon} />
     </SidebarMenuitem>
   );
 };

@@ -10,5 +10,8 @@ html, body, * {
 }
 
 .sidebar__menu__item.active {
-    background-color: #2A8BF2;
+    background-position: right;
+}
+.sidebar__menu__item.active  .label {
+    color: white;
 }

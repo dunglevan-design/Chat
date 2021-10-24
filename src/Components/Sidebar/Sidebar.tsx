@@ -13,11 +13,7 @@ import {
   LogoutContainer,
   MenuLabel,
 } from "./SidebarElements";
-import chat from "../../images/chat.svg";
-import bell from "../../images/bell.svg";
-import person from "../../images/person.svg";
-import play from "../../images/play.svg";
-import power from "../../images/power.svg";
+
 
 type SidebarProps = {
   isopen: boolean;
@@ -103,25 +99,25 @@ const Sidebar = ({ isopen, toggle }: SidebarProps) => {
             isopen={isopen}
             to="/gettingstarted"
             label="HOME"
-            icon={play}
+            icon="play"
           ></SidebarMenuItem>
           <SidebarMenuItem
             isopen={isopen}
             to="/chat"
             label="CHAT"
-            icon={chat}
+            icon="chat"
           ></SidebarMenuItem>
           <SidebarMenuItem
             isopen={isopen}
             to="/notifications"
             label="NOTIFICATIONS"
-            icon={bell}
+            icon="bell"
           ></SidebarMenuItem>
           <SidebarMenuItem
             isopen={isopen}
             to="/profile"
             label="PROFILE"
-            icon={person}
+            icon="person"
           ></SidebarMenuItem>
         </SidebarMenu>
         <LogoutContainer
@@ -133,7 +129,7 @@ const Sidebar = ({ isopen, toggle }: SidebarProps) => {
             full={isopen}
             to="/logout"
             label="LOG OUT"
-            icon={power}
+            icon="power"
           />
         </LogoutContainer>
       </SidebarContainer>
