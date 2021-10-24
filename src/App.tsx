@@ -1,25 +1,47 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import GlobalStyle from './Globals/GlobalStyle';
+import styled from 'styled-components';
+//@ts-ignore
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect
+} from "react-router-dom"; 
+import Sidebar from './Components/Sidebar/Sidebar';
+import Notifications from './Components/Pages/Notifications';
+import Gettingstarted from './Components/Pages/Gettingstarted';
+//@ts-ignore
+import Chat from './Components/Pages/Chat';
+import Profile from './Components/Pages/Profile';
+import { useState } from 'react';
+
 
 function App() {
+  const [isopen, setIsopen] = useState(true);
+
+  const toggle = () => {
+      setIsopen(!isopen);
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <GlobalStyle/>
+      <Sidebar isopen = {isopen} toggle = {toggle}/>
+      <Switch>
+          <Redirect to="/chat" />
+          <Route path="/chat">
+            <Chat />
+          </Route>
+          <Route path="/notifications">
+            <Notifications />
+          </Route>
+          <Route path="/profile">
+            <Profile />
+          </Route>
+          <Route path="/">
+            <Gettingstarted />
+          </Route>
+        </Switch>
+    </Router>
   );
 }
 
