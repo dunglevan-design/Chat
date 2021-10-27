@@ -86,7 +86,7 @@ export const SidebarMenuitem = styled(motion.li)`
   transition: background-position 1s ease-out;
 `;
 
-export const Sidebarbutton = styled(Link)<{ full: boolean }>`
+export const Sidebarbutton = styled(Link)`
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -136,7 +136,7 @@ export const SidebarButton = ({
 
   return (
     <>
-      <Sidebarbutton full={full} to={to}>
+      <Sidebarbutton to={to}>
         <Icon name={icon}></Icon>
         <Label className = "label" variants={labelvariants} animate={full ? `open` : `closed`}>
           {label}
@@ -182,6 +182,8 @@ export const SidebarMenuItem = ({
       variants={buttonanimation}
       animate={isopen ? "open" : "closed"}
       onClick={ToggleActive}
+      whileHover={{scale: 1.05}}
+      whileTap={{scale: 0.9}}
     >
       <SidebarButton full={isopen} to={to} label={label} icon={icon} />
     </SidebarMenuitem>

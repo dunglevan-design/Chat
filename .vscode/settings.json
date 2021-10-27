@@ -4,5 +4,6 @@
         "javascript",
         "typescript"
         // ...
-      ]
+      ],
+      "cmake.configureOnOpen": false
 }
