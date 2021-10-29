@@ -99,24 +99,24 @@ const Login = () => {
           <>
             <Loginlogo></Loginlogo>
             <LoginButton
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => LoginWithGoogle()}
             >
               Log in with Google
               <Providerlogo name="Google"></Providerlogo>
             </LoginButton>
             <LoginButton
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => LoginWithFacebook()}
             >
               Log in with Facebook
               <Providerlogo name="Facebook"></Providerlogo>
             </LoginButton>
             <LoginButton
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => LoginAsGuest()}
             >
               Log in as Guest

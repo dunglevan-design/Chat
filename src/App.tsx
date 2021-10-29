@@ -7,15 +7,14 @@ import {
   Redirect,
 } from "react-router-dom";
 import Sidebar from "./Components/Sidebar/Sidebar";
-import Notifications from "./Components/Pages/Notifications";
-import Gettingstarted from "./Components/Pages/Gettingstarted";
-//@ts-ignore
-import Chat from "./Components/Pages/Chat";
-import Profile from "./Components/Pages/Profile";
 import { useContext, useState } from "react";
 import { context } from "./Globals/GlobalStateProvider";
 import Login from "./Components/Authentication/Login";
 import { User } from "../node_modules/firebase/auth/dist/auth";
+import Chatpage from "./Components/Pages/Chatpage/Chatpage";
+import Notificationspage from "./Components/Pages/Notifications";
+import Profilepage from "./Components/Pages/Profile";
+import Homepage from "./Components/Pages/Homepage";
 
 function App() {
   const [isopen, setIsopen] = useState(true);
@@ -31,18 +30,18 @@ function App() {
         <>
           <Sidebar isopen={isopen} toggle={toggle} />
           <Switch>
-            <Redirect to="/chat" />
+            <Redirect exact from="/" to="/chat" />
             <Route path="/chat">
-              <Chat />
+              <Chatpage />
             </Route>
             <Route path="/notifications">
-              <Notifications />
+              <Notificationspage />
             </Route>
             <Route path="/profile">
-              <Profile />
+              <Profilepage />
             </Route>
             <Route path="/">
-              <Gettingstarted />
+              <Homepage />
             </Route>
           </Switch>
         </>

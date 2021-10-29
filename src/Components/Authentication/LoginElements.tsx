@@ -18,23 +18,26 @@ export const LoginBoard = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 3px 10px;
+  border-radius: 16px;
 `;
 
 export const LoginLogoContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 2rem;
 `;
 
 export const LoginLogoTitle = styled.h1`
-  font-size: 28px;
+  font-size: 36px;
   color: var(--text-primary);
   margin-right: 10px;
 `;
 
-export const LoginLogo = styled.svg`
-  width: 24px;
-  height: 24px;
+export const LoginLogo = styled(motion.svg)`
+  width: 48px;
+  height: 48px;
   fill: black;
 `;
 
@@ -44,16 +47,17 @@ export const Loginlogo = () => {
     <LoginLogoContainer>
       <LoginLogoTitle>Chat</LoginLogoTitle>
       <LoginLogo
-        width="20"
-        height="20"
-        viewBox="0 0 20 20"
+        viewBox="0 0 20 18"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          d="M18 0H2C0.9 0 0.00999999 0.9 0.00999999 2L0 20L4 16H18C19.1 16 20 15.1 20 14V2C20 0.9 19.1 0 18 0ZM4 7H16V9H4V7ZM12 12H4V10H12V12ZM16 6H4V4H16V6Z"
-          fill="black"
+          d="M10 0C4.5 0 0 3.58 0 8C0.05 10.15 1.06 12.17 2.75 13.5C2.75 14.1 2.33 15.67 0 18C2.37 17.89 4.64 17 6.47 15.5C7.61 15.83 8.81 16 10 16C15.5 16 20 12.42 20 8C20 3.58 15.5 0 10 0ZM10 8C5.58 8 13.5 11.31 13.5 8C13.5 4.69 5.58 11 10 11C14.42 11 7 4.69 7 8C7 11.31 14.42 8 10 8Z"
+          fill="#2A8BF2"
         />
+        <motion.circle cx="7" cy="8" r="1" fill="white" initial = {{y: -10}} animate = {{y:0}}/>
+        <motion.circle cx="10" cy="8" r="1" fill="white" initial = {{y: -10}} animate = {{y:0}} transition={{delay: 0.1}}/>
+        <motion.circle cx="13" cy="8" r="1" fill="white" initial = {{y: -10}} animate = {{y:0}} transition={{delay: 0.2}}/>
       </LoginLogo>
     </LoginLogoContainer>
   );
@@ -135,7 +139,7 @@ export const Message = styled.h2`
 export const ReportButton = styled(motion.button)`
   background: rgba(255, 51, 102, 0.25);
   border-radius: 20px;
-  color: #FF3366;
+  color: #ff3366;
   font-size: 20px;
   font-weight: 600;
   padding: 10px;

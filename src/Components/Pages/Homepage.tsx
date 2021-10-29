@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Gettingstarted = () => {
+const Homepage = () => {
     return (
         <>
           Getting Started   
@@ -8,4 +8,4 @@ const Gettingstarted = () => {
     )
 }
 
-export default Gettingstarted
+export default Homepage

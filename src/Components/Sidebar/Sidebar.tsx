@@ -24,6 +24,8 @@ import {
 } from "./SidebarElements";
 import Errorsvg from "../../images/Error.svg";
 import { useSvgFromString } from "../CustomHooks/useSvgFromString";
+import { useMediaQuery } from "../CustomHooks/useMediaQuery";
+import { motion } from "framer-motion";
 
 type SidebarProps = {
   isopen: boolean;
@@ -32,6 +34,7 @@ type SidebarProps = {
 const Sidebar = ({ isopen, toggle }: SidebarProps) => {
   const { globalstate } = useContext(context);
   const [error, setError] = useState("");
+  const matches = useMediaQuery("(max-width: 768px)");
   const variants = {
     initial: {
       width: 50,
@@ -50,6 +53,20 @@ const Sidebar = ({ isopen, toggle }: SidebarProps) => {
       height: "100%",
       transition: { width: { duration: 0.6 } },
     },
+    closedmobile: {
+      width: 100,
+      height: 75,
+      transition: { width: { duration: 0.6 } },
+    },
+
+    openmobile: {
+      width: 250,
+      height: "100%",
+      transition: {
+        width: { duration: 0.2 },
+        height: { duration: 0.2 },
+      },
+    },
   };
 
   const labelvariants = {
@@ -64,6 +81,13 @@ const Sidebar = ({ isopen, toggle }: SidebarProps) => {
     closed: { opacity: 0, transition: { duration: 0.3 } },
   };
 
+  const responsiveanmimation = {
+    closed: { display: "block" },
+    open: { display: "block" },
+    openmobile: { display: "block" },
+    closedmobile: { display: "none" },
+  };
+
   const Signout = () => {
     signOut(auth).catch((e: Error) => {
       const message = e.message;
@@ -75,7 +99,7 @@ const Sidebar = ({ isopen, toggle }: SidebarProps) => {
     <>
       {!error ? (
         <SidebarContainer
-          animate={isopen ? `open` : `closed`}
+          animate={`${isopen ? `open` : `closed`}${matches ? "mobile" : ""}`}
           initial={`initial`}
           variants={variants}
           isopen={isopen}
@@ -97,63 +121,71 @@ const Sidebar = ({ isopen, toggle }: SidebarProps) => {
             </MenuLabel>
             {/* </AnimatePresence> */}
           </MenuIconButton>
-          <SidebarAvatarContainer
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8, duration: 0.4 }}
+          <motion.div
+            variants={responsiveanmimation}
+            animate={`${isopen ? `open` : `closed`}${matches ? "mobile" : ""}`}
           >
-            <SidebarImage full = {isopen} src = {globalstate.user.photoURL} />
-            <SidebarUserName
-              variants={usernameanimation}
-              animate={isopen ? `open` : `closed`}
+            <SidebarAvatarContainer
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8, duration: 0.4 }}
             >
-              {globalstate.user.displayName}
-            </SidebarUserName>
-          </SidebarAvatarContainer>
-          <SidebarMenu
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1, duration: 0.4 }}
-          >
-            <SidebarMenuItem
-              isopen={isopen}
-              to="/gettingstarted"
-              label="HOME"
-              icon="play"
-            ></SidebarMenuItem>
-            <SidebarMenuItem
-              isopen={isopen}
-              to="/chat"
-              label="CHAT"
-              icon="chat"
-            ></SidebarMenuItem>
-            <SidebarMenuItem
-              isopen={isopen}
-              to="/notifications"
-              label="NOTIFICATIONS"
-              icon="bell"
-            ></SidebarMenuItem>
-            <SidebarMenuItem
-              isopen={isopen}
-              to="/profile"
-              label="PROFILE"
-              icon="person"
-            ></SidebarMenuItem>
-          </SidebarMenu>
-          <LogoutContainer
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1, transition: { delay: 1.2, duration: 0.4 } }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => Signout()}
-          >
-            <SidebarButton
-              full={isopen}
-              to="/logout"
-              label="LOG OUT"
-              icon="power"
-            />
-          </LogoutContainer>
+              <SidebarImage full={isopen} src={globalstate.user.photoURL} />
+              <SidebarUserName
+                variants={usernameanimation}
+                animate={isopen ? `open` : `closed`}
+              >
+                {globalstate.user.displayName}
+              </SidebarUserName>
+            </SidebarAvatarContainer>
+            <SidebarMenu
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1, duration: 0.4 }}
+            >
+              <SidebarMenuItem
+                isopen={isopen}
+                to="/gettingstarted"
+                label="HOME"
+                icon="play"
+              ></SidebarMenuItem>
+              <SidebarMenuItem
+                isopen={isopen}
+                to="/chat"
+                label="CHAT"
+                icon="chat"
+              ></SidebarMenuItem>
+              <SidebarMenuItem
+                isopen={isopen}
+                to="/notifications"
+                label="NOTIFICATIONS"
+                icon="bell"
+              ></SidebarMenuItem>
+              <SidebarMenuItem
+                isopen={isopen}
+                to="/profile"
+                label="PROFILE"
+                icon="person"
+              ></SidebarMenuItem>
+            </SidebarMenu>
+            <LogoutContainer
+              initial={{ opacity: 0 }}
+              animate={{
+                opacity: 1,
+                transition: { delay: 1.2, duration: 0.4 },
+              }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => Signout()}
+            >
+              <SidebarButton
+                full={isopen}
+                to="/logout"
+                label="LOG OUT"
+                icon="power"
+              />
+            </LogoutContainer>
+          </motion.div>
         </SidebarContainer>
       ) : (
         <ErrorMessageContainer>

@@ -2,7 +2,8 @@
     "colorize.languages": [
         "TypeScript",
         "javascript",
-        "typescript"
+        "typescript",
+        "typescriptreact"
         // ...
       ],
       "cmake.configureOnOpen": false
