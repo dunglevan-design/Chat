@@ -33,16 +33,23 @@ const Login = () => {
         if (user) {
           // User is signed in, see docs for a list of available properties
           // https://firebase.google.com/docs/reference/js/firebase.User
-          console.log(JSON.stringify(user));
+          // console.log(JSON.stringify(user));
           let svg = createAvatar(style, {
               seed: user.uid,
           })
           const svgsrc = `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
-
-          dispatch({
-            type: "SET_USER",
-            user: {...user, photoURL: svgsrc},
-          });
+          if (user.displayName === null){
+            dispatch({
+              type:"SET_USER",
+              user: {...user, photoURL: svgsrc, displayName : "anonymous"}
+            });
+          }
+          else {
+            dispatch({
+              type: "SET_USER",
+              user: {...user, photoURL: svgsrc},
+            });
+          }
           // ...
         } else {
           dispatch({

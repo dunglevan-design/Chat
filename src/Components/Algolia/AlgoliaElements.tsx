@@ -3,11 +3,13 @@ import { motion } from "framer-motion";
 import { useRef } from "react";
 import { useTimeElapsed } from "../CustomHooks/useTimeElapsed";
 import { Timestamp } from "firebase/firestore";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
+import { room } from "./Algolia";
+import { useMediaQuery } from "../CustomHooks/useMediaQuery";
 //import { Link } from "react-router-dom";
 
 type roomHit = {
-  objectID : string;
+  objectID: string;
   roommessagecount: number;
   roomname: string;
   roomphotoURL: string;
@@ -17,8 +19,7 @@ type roomHit = {
   lastmodified?: number;
   latestmessagetime?: number;
   latestmessageuser?: string;
-
-}
+};
 
 const Resetbutton = styled(motion.button)`
   position: absolute;
@@ -40,14 +41,13 @@ const Resetbutton = styled(motion.button)`
 `;
 
 const SvgReset = styled.svg`
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 `;
 
-
-export const ResetButton = ({Reset}: {Reset:() => void}) => {
+export const ResetButton = ({ Reset }: { Reset: () => void }) => {
   return (
-    <Resetbutton className =  "reset__button"  onClick={Reset}>
+    <Resetbutton className="reset__button" onClick={Reset}>
       <SvgReset
         viewBox="0 0 16 16"
         fill="none"
@@ -69,6 +69,7 @@ const Roomcard = styled(motion.div)`
   display: flex;
   flex-direction: column;
   position: relative;
+
   border-radius: 16px;
   padding: 10px 0;
   cursor: pointer;
@@ -112,22 +113,121 @@ const RoomTimeStamp = styled.p`
 const Bottom = styled.div`
   padding: 0 10px;
 `;
-const RoomMessage = styled.p``;
+const RoomMessage = styled.p`
+  overflow-wrap: break-word;
+`;
 
+export const RoomlistContainer = styled.div`
+  position: relative;
+  height: calc(100% - 76px);
+  overflow: hidden;
+`;
 
+export const Slider = styled(motion.div)`
+  position: relative;
+  height: 100%;
+`;
+
+export const Wrapper = styled.div`
+  height: 100%;
+`;
+export const Roomlist = styled.ul`
+  position: absolute;
+  height: 100%;
+  width: 100%;
+`;
+
+const HitItem = styled(motion.div)`
+  display: flex;
+  align-items: center;
+  border-radius: 16px;
+  padding: 10px 0;
+  cursor: pointer;
+  &:hover {
+    background-color: #f2f2f2;
+  }
+`;
+
+const HitImage = styled.img`
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const HitInfo = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+`;
+const HitRoomname = styled.h2`
+  font-size: 18px;
+`;
+
+const HitRoomtype = styled.p`
+  overflow-wrap: break-word;
+`;
+
+export const Hitwrapper = styled.div`
+  top: 0;
+  height: 100%;
+  position: absolute;
+  left: 100%;
+  width: 100%;
+`;
 
 export const Hit = ({ hit }: { hit: roomHit }) => {
   const CurrentItem = useRef(null);
-  const returnedtime = Timestamp.fromMillis(hit.latestmessagetime);
-  // console.log("timestampnow: " + timestampnow);
+  const history = useHistory();
+  const matches = useMediaQuery("(max-width: 600px)");
+  const EnterRoom = () => {
+    history.push(`/chat/${hit.path}`)
+    if (matches) {
+      
+      (document.querySelector(".View__Slider") as HTMLElement).style.transform =
+        "translateX(-100vw)";
+    }
+  };
+  return (
+    <HitItem
+      whileTap={{ scale: 0.95 }}
+      ref={CurrentItem}
+      className="roomcard"
+      onClick={() => EnterRoom()}
+    >
+      <HitImage src={hit.roomphotoURL} />
+      <HitInfo>
+        <HitRoomname>{hit.roomname}</HitRoomname>
+        <HitRoomtype>{hit.roomtype}</HitRoomtype>
+      </HitInfo>
+    </HitItem>
+  );
+};
+
+export const Room = ({
+  roomid,
+  roomname,
+  roomtype,
+  roomphotoURL,
+  latestmessage,
+  latestmessagetime,
+  latestmessageuser,
+}: room) => {
+  const CurrentItem = useRef(null);
+  const returnedtime = Timestamp.fromMillis(latestmessagetime.seconds * 1000);
   const messagetime = useTimeElapsed(returnedtime);
   const history = useHistory();
-
+  const matches = useMediaQuery("(max-width:600px)");
 
   const EnterRoom = () => {
-    history.push(`/chat/${hit.path}`);
+    history.push(`/chat/rooms/${roomid}`);
     ToggleActive();
-  }
+    if (matches) {
+      (document.querySelector(".View__Slider") as HTMLElement).style.transform =
+        "translateX(-100vw)";
+    }
+  };
 
   const ToggleActive = () => {
     const ActiveItem = document.querySelector(".roomcard.active");
@@ -146,16 +246,16 @@ export const Hit = ({ hit }: { hit: roomHit }) => {
     >
       <Top>
         <Logo>
-          <RoomImg src={hit.roomphotoURL} />
+          <RoomImg src={roomphotoURL} />
           <RoomInfo>
-            <RoomName>{hit.roomname}</RoomName>
-            <RoomAction>{hit.latestmessageuser} writes</RoomAction>
+            <RoomName>{roomname}</RoomName>
+            <RoomAction>{latestmessageuser} writes</RoomAction>
           </RoomInfo>
         </Logo>
         <RoomTimeStamp>{messagetime}</RoomTimeStamp>
       </Top>
       <Bottom>
-        <RoomMessage>{hit.latestmessage}</RoomMessage>
+        <RoomMessage>{latestmessage}</RoomMessage>
       </Bottom>
     </Roomcard>
   );

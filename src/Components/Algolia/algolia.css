@@ -1,5 +1,6 @@
 .algolia__container {
     margin: 10px 0;
+    height: 90%
 }
 
 .ais-SearchBox {
@@ -65,5 +66,8 @@
 }
 .roomcard.active:hover {
     background-color: #EAF3FF;
+}
 
+
+.ais-Hits {
 }

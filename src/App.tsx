@@ -30,8 +30,8 @@ function App() {
         <>
           <Sidebar isopen={isopen} toggle={toggle} />
           <Switch>
-            <Redirect exact from="/" to="/chat" />
-            <Route path="/chat">
+            {/* <Redirect exact from="/" to="/chat/rooms/CJEJ9bI7mBP8WK8bVY01" /> */}
+            <Route path="/chat/:rooms?/:roomid?">
               <Chatpage />
             </Route>
             <Route path="/notifications">

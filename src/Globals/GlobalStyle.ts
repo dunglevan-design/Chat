@@ -12,9 +12,9 @@ const GlobalStyle = createGlobalStyle`
   }
 
   #root {
-    height: 100vh;
-    width: 100vw;
     background: linear-gradient(180deg, #F3F3FB 0%, #FDFBFD 100%);
+    width: 100vw;
+    height: 100vh;
   }
 `; 
  

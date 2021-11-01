@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { motion } from "framer-motion";
 
 export const Container = styled.div`
   display: flex;
@@ -7,8 +6,9 @@ export const Container = styled.div`
   position: absolute;
   left: 100px;
   top: 80px;
-  height: calc(100% - 75px);
+  height: calc(100% - 80px);
   padding: 0 10px;
+  overflow: hidden;
   @media screen and (max-width: 768px) {
     width: 100%;
     left: 0;
@@ -18,36 +18,45 @@ export const Container = styled.div`
 `;
 
 export const Content = styled.div`
- position: relative;
  width: 100%;
- display: flex;
  height: 100%;
- 
+ position: relative;
+ transition: all 0.3s ease-in;
 `;
 
 export const Left = styled.div`
   display: flex;
-  flex: 1 1 380px;
+  height: 100%;
+  width: 50%;
   background: white;
   flex-direction: column;
   padding: 10px;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
     rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
   border-radius: 16px;
+  position: absolute;
+  left: 0;
   @media screen and (max-width: 600px) {
     width: 100%;
-    position: absolute;
   }
 `;
 export const Right = styled.div`
+  height: 100%;
+  width: 50%;
   display: flex;
-  flex: 1 1 320px;
   background: white;
+  flex-direction: column;
+  padding: 10px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+    rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+  border-radius: 16px;
+  position: absolute;
+  left: 50%;
 
   @media screen and (max-width: 600px) {
     width: 100%;
-    position: absolute;
     left: 100vw;
+    /* top: 1000vh; */
   }
 `;
 export const Top = styled.div`
@@ -83,5 +92,4 @@ export const Addsvg = styled.svg`
   width: 24px;
   height: 24px;
 `;
-
 
