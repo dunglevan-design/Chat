@@ -1,0 +1,23 @@
+.MuiFilledInput-root{
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 500 !important;
+    background-color: white !important;
+    border-radius: 16px !important;
+}
+
+.css-d9oaum-MuiSelect-select-MuiInputBase-input-MuiFilledInput-input:focus{
+    background-color: white !important;
+    border-radius: 16px !important;
+}
+
+#demo-simple-select-label, #filled-basic-label {
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 500 !important;
+}
+
+
+.MuiList-root li {
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 500 !important;
+}
+

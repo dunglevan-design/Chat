@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 export function useTimeElapsed(timestamp: Timestamp){
     const [messagetime, setMessageTime] = useState("");
     const ConvertTimestamp = (timestamp:Timestamp) : string => {
-      if (typeof timestamp === "undefined") return "";
+      if (!timestamp) return "";
   
       const now = Timestamp.now();
       const timepassed = now.seconds - timestamp.seconds;

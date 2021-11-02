@@ -135,6 +135,9 @@ export const Roomlist = styled.ul`
   position: absolute;
   height: 100%;
   width: 100%;
+  overflow: hidden;
+  overflow-y: scroll;
+  z-index: 3;
 `;
 
 const HitItem = styled(motion.div)`
@@ -215,7 +218,8 @@ export const Room = ({
   latestmessageuser,
 }: room) => {
   const CurrentItem = useRef(null);
-  const returnedtime = Timestamp.fromMillis(latestmessagetime.seconds * 1000);
+  const returnedtime = Timestamp.fromMillis(latestmessagetime?.seconds * 1000);
+  console.log(returnedtime);
   const messagetime = useTimeElapsed(returnedtime);
   const history = useHistory();
   const matches = useMediaQuery("(max-width:600px)");
@@ -249,10 +253,10 @@ export const Room = ({
           <RoomImg src={roomphotoURL} />
           <RoomInfo>
             <RoomName>{roomname}</RoomName>
-            <RoomAction>{latestmessageuser} writes</RoomAction>
+            {latestmessageuser && <RoomAction>{latestmessageuser} writes</RoomAction>}
           </RoomInfo>
         </Logo>
-        <RoomTimeStamp>{messagetime}</RoomTimeStamp>
+        {latestmessagetime && <RoomTimeStamp>{messagetime}</RoomTimeStamp>}
       </Top>
       <Bottom>
         <RoomMessage>{latestmessage}</RoomMessage>

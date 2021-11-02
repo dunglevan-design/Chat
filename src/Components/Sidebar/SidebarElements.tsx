@@ -16,7 +16,7 @@ export const SidebarContainer = styled(motion.nav)<{ isopen: boolean }>`
   padding-left: 30px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   overflow: hidden;
-  z-index: 10;
+  z-index: 9;
 `;
 
 export const MenuIconButton = styled(motion.button)`
