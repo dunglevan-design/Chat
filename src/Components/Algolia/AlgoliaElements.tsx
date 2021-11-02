@@ -256,7 +256,7 @@ export const Room = ({
             {latestmessageuser && <RoomAction>{latestmessageuser} writes</RoomAction>}
           </RoomInfo>
         </Logo>
-        {latestmessagetime && <RoomTimeStamp>{messagetime}</RoomTimeStamp>}
+         {latestmessagetime && <RoomTimeStamp>{messagetime}</RoomTimeStamp>}
       </Top>
       <Bottom>
         <RoomMessage>{latestmessage}</RoomMessage>

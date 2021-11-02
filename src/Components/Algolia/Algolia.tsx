@@ -91,8 +91,6 @@ const Algolia = () => {
         rooms.push({ ...aroom });
       });
       setroomlist(rooms);
-      console.log("room set: ");
-      console.log(rooms);
     });
 
     return unsubscribe;
