@@ -1,10 +1,18 @@
 import styled from "styled-components";
 import { motion } from "framer-motion";
-import {FormControl, Select,  InputLabel, MenuItem, TextField } from "@mui/material";
+import {
+  FormControl,
+  Select,
+  InputLabel,
+  MenuItem,
+  TextField,
+  Switch,
+} from "@mui/material";
 import "./Chatpage.css";
-import { useState } from "react";
-import { addDoc, collection } from "firebase/firestore";
+import { useContext, useState } from "react";
+import { addDoc, collection, getDoc, doc, updateDoc, setDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
+import { context } from "../../../Globals/GlobalStateProvider";
 
 export const Container = styled.div`
   display: flex;
@@ -110,6 +118,11 @@ const StyledBackdrop = styled(motion.div)`
   align-items: center;
   justify-content: center;
   z-index: 10;
+
+  & .modal__wrapper {
+    width: clamp(50%, 700px, 90%);
+    height: min(70%, 500px);
+  }
 `;
 export const Backdrop = ({ children, onClick }) => {
   return (
@@ -125,9 +138,9 @@ export const Backdrop = ({ children, onClick }) => {
 };
 
 const StyledModal = styled(motion.div)`
-  width: clamp(50%, 700px, 90%);
-  height: min(70%, 500px);
-
+  position: absolute;
+  width: 100%;
+  height: 100%;
   padding: 10px;
   border-radius: 12px;
   display: flex;
@@ -139,6 +152,32 @@ const StyledModal = styled(motion.div)`
     4px 4px 25px rgba(42, 139, 242, 0.05),
     10px 6px 25px rgba(42, 139, 242, 0.15);
 `;
+
+const SwitchContainer = styled.div`
+  position: relative;
+  top: -10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+`;
+
+const SwitchLabel = styled.div`
+  display: flex;
+  justify-content: space-between;
+
+  & p:nth-child(2) {
+    margin: 10px;
+    color: ${(props) => (props.flipped ? "#2A8BF2" : "black")};
+    font-weight: ${(props) => (props.flipped ? "500" : "400")};
+  }
+  & p:nth-child(1) {
+    margin: 10px;
+    font-weight: ${(props) => (props.flipped ? "400" : "500")};
+    color: ${(props) => (props.flipped ? "black" : "#2A8BF2")};
+  }
+`;
+
 const dropin = {
   hidden: {
     y: "-100vh",
@@ -149,6 +188,28 @@ const dropin = {
   exit: {
     y: "100vh",
     opacity: 0,
+  },
+};
+
+const rotate = {
+  rotatein: {
+    rotateY: 0,
+    transition: {
+      duration: 1,
+      delay: 1,
+    },
+  },
+  rotateout: {
+    rotateY: 90,
+    transition: {
+      duration: 1,
+    },
+  },
+  rotateout2: {
+    rotateY: -90,
+    transition: {
+      duration: 1,
+    },
   },
 };
 
@@ -204,10 +265,16 @@ const SubmitButton = styled(motion.button)`
   align-items: center;
 `;
 export const Modal = ({ handleClose }) => {
-
   const [roomname, setRoomname] = useState("");
   const [roomtype, setRoomtype] = useState("");
-  const roomImage = "https://avatars.dicebear.com/api/adventurer/your-custom-seed.svg";
+  const [roomid, setroomid] = useState("");
+  const [flipmodal, setFlipmodal] = useState(false);
+  const { globalstate } = useContext(context);
+  const user = globalstate.user;
+  const [error, seterror] = useState("");
+
+  const roomImage =
+    "https://avatars.dicebear.com/api/adventurer/your-custom-seed.svg";
 
   const HandleSubmit = async (e) => {
     e.preventDefault();
@@ -218,51 +285,140 @@ export const Modal = ({ handleClose }) => {
       roommessagecount: 0,
     });
     handleClose();
-  }
+  };
+
+  const validRoomid = async (roomid) => {
+    const snapshot = await getDoc(doc(db, "rooms", roomid));
+    if (snapshot.exists()) {
+      return true;
+    }
+    return false;
+  };
+
+  const Joinroom = async (e) => {
+    e.preventDefault();
+    if (await validRoomid(roomid)) {
+      seterror("room created sucessfully");
+      const snapshot = await getDoc(doc(db, "users", user.uid));
+      const roomlist = snapshot.data()?.privateRooms;
+      if (!roomlist){
+        setDoc(doc(db, "users", user.uid), {
+          privateRooms: [roomid],
+        })
+      } 
+      else {
+        if (roomlist.includes(roomid)) return;
+        roomlist.push(roomid);
+        setDoc(doc(db, "users",user.uid), {
+          privateRooms: roomlist,
+        });
+      }
+    } else {
+      seterror("room doesn't exist");
+    }
+    
+  };
 
   return (
     <Backdrop onClick={handleClose}>
-      <StyledModal
+      <motion.div
+        className="modal__wrapper"
         onClick={(e) => e.stopPropagation()}
         variants={dropin}
         initial="hidden"
         animate="visible"
         exit="exit"
       >
-        <Form onSubmit={(e) => HandleSubmit(e)}>
-          <Group>
-            <TextField value = {roomname} onChange={(e) => setRoomname(e.currentTarget.value)} id="filled-basic"  fullWidth label="Roomname" variant="filled" />
-          </Group>
-          <Group>
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Room Type</InputLabel>
-              <Select
+        <SwitchContainer>
+          <SwitchLabel flipped={flipmodal}>
+            <p>Create room</p>
+            <p>Join A room</p>
+          </SwitchLabel>
+          <Switch
+            checked={flipmodal}
+            onChange={(e) => setFlipmodal(e.target.checked)}
+            inputProps={{ "aria-label": "controlled" }}
+          />
+        </SwitchContainer>
+        <StyledModal
+          onClick={(e) => e.stopPropagation()}
+          variants={rotate}
+          animate={flipmodal ? "rotateout" : "rotatein"}
+        >
+          <Form onSubmit={(e) => HandleSubmit(e)}>
+            <Group>
+              <TextField
+                value={roomname}
+                onChange={(e) => setRoomname(e.currentTarget.value)}
+                id="filled-basic"
+                fullWidth
+                label="Roomname"
                 variant="filled"
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={roomtype}
-                label="Age"
-                onChange={(e) => setRoomtype(e.target.value)}
+              />
+            </Group>
+            <Group>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Room Type</InputLabel>
+                <Select
+                  variant="filled"
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={roomtype}
+                  label="Age"
+                  onChange={(e) => setRoomtype(e.target.value)}
+                >
+                  <MenuItem value="public">Public</MenuItem>
+                  <MenuItem value="private">Private</MenuItem>
+                </Select>
+              </FormControl>
+            </Group>
+            <Group>
+              <Label>Room Image:</Label>
+            </Group>
+            <Group>
+              <SubmitButton
+                whileTap={{ scale: 0.9 }}
+                whileHover={{ scale: 1.1 }}
+                type="submit"
               >
-                <MenuItem value="public">Public</MenuItem>
-                <MenuItem value="private">Private</MenuItem>
-              </Select>
-            </FormControl>
-          </Group>
-          <Group>
-            <Label>Room Image:</Label>
-          </Group>
-          <Group>
-            <SubmitButton
-              whileTap={{ scale: 0.9 }}
-              whileHover={{ scale: 1.1 }}
-              type="submit"
-            >
-              Submit
-            </SubmitButton>
-          </Group>
-        </Form>
-      </StyledModal>
+                Submit
+              </SubmitButton>
+            </Group>
+          </Form>
+        </StyledModal>
+        <StyledModal
+          onClick={(e) => e.stopPropagation()}
+          variants={rotate}
+          animate={!flipmodal ? "rotateout2" : "rotatein"}
+        >
+          <Form onSubmit={(e) => Joinroom(e)}>
+            <Group>
+              <TextField
+                value={roomid}
+                onChange={(e) => setroomid(e.currentTarget.value)}
+                id="filled-basic"
+                fullWidth
+                label="room id"
+                variant="filled"
+              />
+            </Group>
+            {error && (
+              <Group>
+                <p>{error}</p>
+              </Group>
+            )}
+            <Group>
+              <SubmitButton
+                whileTap={{ scale: 0.9 }}
+                whileHover={{ scale: 1.1 }}
+                type="submit"
+              >
+                Submit
+              </SubmitButton>
+            </Group>
+          </Form>
+        </StyledModal>
+      </motion.div>
     </Backdrop>
   );
 };

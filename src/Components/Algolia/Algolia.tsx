@@ -12,9 +12,17 @@ import {
 import algoliasearch from "algoliasearch";
 import { InstantSearch, SearchBox, Hits } from "react-instantsearch-dom";
 import "./algolia.css";
-import { SyntheticEvent, useEffect, useState } from "react";
-import { query, collection, onSnapshot, Timestamp } from "firebase/firestore";
+import { SyntheticEvent, useContext, useEffect, useState } from "react";
+import {
+  query,
+  collection,
+  onSnapshot,
+  Timestamp,
+  where,
+} from "firebase/firestore";
 import { db } from "../../firebase";
+import { usePrivateRooms } from "../CustomHooks/usePrivateRooms";
+import { context } from "../../Globals/GlobalStateProvider";
 
 const searchClient = algoliasearch(
   "31RACQ57NW",
@@ -34,6 +42,9 @@ export type room = {
 };
 const Algolia = () => {
   const [roomlist, setroomlist] = useState<room[]>([]);
+  const { globalstate } = useContext(context);
+  const user = globalstate.user;
+  const privaterooms = usePrivateRooms(user.uid);
   const [inputfocused, setinputfocused] = useState(false);
 
   const variants = {
@@ -62,7 +73,6 @@ const Algolia = () => {
     const addfocus = () => {
       setinputfocused(true);
       container.classList.add("focus");
-      
     };
     const removefocus = () => {
       // qeuue this. Otherwise any click effects on a component that depends on inputfocused wont be registerd
@@ -71,7 +81,6 @@ const Algolia = () => {
         console.log("input unfocus event");
       }, 100);
       container.classList.remove("focus");
-
     };
     input.addEventListener("focus", addfocus);
     input.addEventListener("blur", removefocus);
@@ -83,7 +92,7 @@ const Algolia = () => {
   }, []);
 
   useEffect(() => {
-    const q = query(collection(db, "rooms"));
+    const q = query(collection(db, "rooms"), where("roomtype", "==", "public"));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       let rooms: room[] = [];
       querySnapshot.forEach((room) => {
@@ -109,11 +118,17 @@ const Algolia = () => {
         <ResetButton Reset={Reset} />
         <SearchBox onReset={(e) => ToggleFocus(e)} />
         <RoomlistContainer>
-          <Slider variants = {variants}  animate = {inputfocused ? "slideout" : "slidein"}>
+          <Slider
+            variants={variants}
+            animate={inputfocused ? "slideout" : "slidein"}
+          >
             <Wrapper>
               <Roomlist>
                 {roomlist.map((room, index) => (
                   <Room key={index} {...room} />
+                ))}
+                {privaterooms.map((privateroom) => (
+                  <Room key={privateroom.roomid} {...privateroom} />
                 ))}
               </Roomlist>
             </Wrapper>

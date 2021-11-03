@@ -14,8 +14,8 @@ import {
 } from "firebase/firestore";
 import { context } from "../../Globals/GlobalStateProvider";
 import { useMediaQuery } from "../CustomHooks/useMediaQuery";
-
-
+import ExitSvg from "../../images/exit.svg";
+import videocallsvg from "../../images/videocall.svg";
 
 const Container = styled.div`
   display: flex;
@@ -65,7 +65,7 @@ const RoomAction = styled.div`
   justify-content: center;
   align-items: center;
 `;
-const Addmember = styled.button`
+const CopyRoomid = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -75,6 +75,7 @@ const Addmember = styled.button`
   border-radius: 50%;
   height: 40px;
   width: 40px;
+  cursor: pointer;
 `;
 const DeleteRoom = styled.button`
   height: 40px;
@@ -82,12 +83,38 @@ const DeleteRoom = styled.button`
   border-radius: 50%;
   border: none;
   outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+
+  & img {
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    left: 35%;
+  }
 `;
-const DeleteSvg = styled.svg`
-  width: 16px;
-  height: 16px;
+const VideoCall = styled.button`
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  border: none;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+
+  & img {
+    width: 18px;
+    height: 18px;
+    position: absolute;
+    left: 30%;
+  }
 `;
-const RoomTime = styled.div``;
 const ChatView = styled.div`
   height: calc(100% - 60px - 80px);
   padding: 10px 0;
@@ -162,9 +189,8 @@ const Input = styled.input`
 `;
 
 const AddContainer = styled.div`
-    &:hover .add__menu {
+  &:hover .add__menu {
     opacity: 1;
-
   }
 `;
 const Addbutton = styled.button`
@@ -174,7 +200,6 @@ const Addbutton = styled.button`
   border-radius: 50%;
   background: linear-gradient(325.78deg, #2a8bf2 14.76%, #7cb8f7 87.3%);
   cursor: pointer;
-
 `;
 const Addemojibutton = styled.button`
   border: none;
@@ -207,9 +232,7 @@ const AddmenuButton = styled.button`
   cursor: pointer;
 `;
 
-
-
-const Chatinput = (props:any) => {
+const Chatinput = (props: any) => {
   const { roomid }: { roomid: string } = useParams();
   const [inputvalue, setinputvalue] = useState("");
   const { globalstate } = useContext(context);
@@ -396,26 +419,27 @@ const ChatBox = () => {
           <Roomtype>{roomdetails?.roomtype}</Roomtype>
         </RoomInfo>
         <RoomAction>
-          <Addmember>+</Addmember>
-          <DeleteRoom>
-            <DeleteSvg
-              viewBox="0 0 14 18"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
+          <CopyRoomid>
+            <svg width="16" height="16" viewBox="0 0 19 22" fill="none">
               <path
-                d="M1 16C1 17.1 1.9 18 3 18H11C12.1 18 13 17.1 13 16V4H1V16ZM14 1H10.5L9.5 0H4.5L3.5 1H0V3H14V1Z"
+                d="M14 0H2C0.9 0 0 0.9 0 2V16H2V2H14V0ZM13 4L19 10V20C19 21.1 18.1 22 17 22H5.99C4.89 22 4 21.1 4 20L4.01 6C4.01 4.9 4.9 4 6 4H13ZM12 11H17.5L12 5.5V11Z"
                 fill="black"
               />
-            </DeleteSvg>
+            </svg>
+          </CopyRoomid>
+          <DeleteRoom>
+            <img className="delete__svg" src={ExitSvg}></img>
           </DeleteRoom>
-          <RoomTime>TODO</RoomTime>
+          <VideoCall>
+            <img src={videocallsvg}></img>
+          </VideoCall>
         </RoomAction>
       </Top>
       <ChatView>
         <MessageList>
           {messagelist.map((message, index) => (
-            <MessageContainer key= {index}
+            <MessageContainer
+              key={index}
               Isentit={message.userid === user.uid ? true : false}
             >
               <UserImg
@@ -435,10 +459,9 @@ const ChatBox = () => {
           ))}
           <div ref={EndOfMessageList}></div>
         </MessageList>
-        
       </ChatView>
       <Bottom>
-        <Chatinput endofMessageList = {EndOfMessageList}/>
+        <Chatinput endofMessageList={EndOfMessageList} />
       </Bottom>
     </Container>
   );
