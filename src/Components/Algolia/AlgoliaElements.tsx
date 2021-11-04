@@ -219,7 +219,6 @@ export const Room = ({
 }: room) => {
   const CurrentItem = useRef(null);
   const returnedtime = Timestamp.fromMillis(latestmessagetime?.seconds * 1000);
-  console.log(returnedtime);
   const messagetime = useTimeElapsed(returnedtime);
   const history = useHistory();
   const matches = useMediaQuery("(max-width:600px)");

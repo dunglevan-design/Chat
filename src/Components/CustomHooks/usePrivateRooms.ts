@@ -36,7 +36,6 @@ export const usePrivateRooms = (userid: string) => {
     });
     return () => {
         unsubscribe1();
-        unsubscribe2();
     };
   }, []);
   return privaterooms;

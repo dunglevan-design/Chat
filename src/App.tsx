@@ -15,6 +15,7 @@ import Chatpage from "./Components/Pages/Chatpage/Chatpage";
 import Notificationspage from "./Components/Pages/Notifications";
 import Profilepage from "./Components/Pages/Profile";
 import Homepage from "./Components/Pages/Homepage";
+import VideoChatRoom from "./Components/VideoChat/VideoChatRoom";
 
 function App() {
   const [isopen, setIsopen] = useState(true);
@@ -23,16 +24,29 @@ function App() {
   const toggle = () => {
     setIsopen(!isopen);
   };
+
+  const [videocalling, setvideocalling] = useState(false);
+
+  const StartVideocall = () => {
+    setvideocalling(true);
+  };
+
+  const StopVideocall = () => {
+    setvideocalling(false);
+  };
   return (
     <Router>
       <GlobalStyle />
       {user ? (
         <>
           <Sidebar isopen={isopen} toggle={toggle} />
+          {videocalling && (
+            <VideoChatRoom stopvideocall={StopVideocall}></VideoChatRoom>
+          )}
           <Switch>
             {/* <Redirect exact from="/" to="/chat/rooms/CJEJ9bI7mBP8WK8bVY01" /> */}
             <Route path="/chat/:rooms?/:roomid?">
-              <Chatpage />
+              <Chatpage StartVideocall={StartVideocall}/>
             </Route>
             <Route path="/notifications">
               <Notificationspage />

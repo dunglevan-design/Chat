@@ -271,34 +271,16 @@ export const Modal = ({ handleClose }) => {
   const [flipmodal, setFlipmodal] = useState(false);
   const { globalstate } = useContext(context);
   const user = globalstate.user;
-  const [error, seterror] = useState("");
+  const [message, setmessage] = useState("");
 
   const roomImage =
     "https://avatars.dicebear.com/api/adventurer/your-custom-seed.svg";
 
-  const HandleSubmit = async (e) => {
-    e.preventDefault();
-    await addDoc(collection(db, "rooms"), {
-      roomname: roomname,
-      roomtype: roomtype,
-      roomphotoURL: roomImage,
-      roommessagecount: 0,
-    });
-    handleClose();
-  };
 
-  const validRoomid = async (roomid) => {
-    const snapshot = await getDoc(doc(db, "rooms", roomid));
-    if (snapshot.exists()) {
-      return true;
-    }
-    return false;
-  };
 
-  const Joinroom = async (e) => {
-    e.preventDefault();
+  const joinRoombyId = async (roomid) => {
     if (await validRoomid(roomid)) {
-      seterror("room created sucessfully");
+      setmessage("room created sucessfully");
       const snapshot = await getDoc(doc(db, "users", user.uid));
       const roomlist = snapshot.data()?.privateRooms;
       if (!roomlist){
@@ -314,8 +296,33 @@ export const Modal = ({ handleClose }) => {
         });
       }
     } else {
-      seterror("room doesn't exist");
+      setmessage("room doesn't exist");
     }
+  }
+  const HandleSubmit = async (e) => {
+    e.preventDefault();
+    const newroom = await addDoc(collection(db, "rooms"), {
+      roomname: roomname,
+      roomtype: roomtype,
+      roomphotoURL: roomImage,
+      roommessagecount: 0,
+    });
+    joinRoombyId(newroom.id);
+    handleClose();
+
+  };
+
+  const validRoomid = async (roomid) => {
+    const snapshot = await getDoc(doc(db, "rooms", roomid));
+    if (snapshot.exists()) {
+      return true;
+    }
+    return false;
+  };
+
+  const Joinroom = async (e) => {
+    e.preventDefault();
+    joinRoombyId(roomid);
     
   };
 
@@ -402,9 +409,9 @@ export const Modal = ({ handleClose }) => {
                 variant="filled"
               />
             </Group>
-            {error && (
+            {message && (
               <Group>
-                <p>{error}</p>
+                <p>{message}</p>
               </Group>
             )}
             <Group>

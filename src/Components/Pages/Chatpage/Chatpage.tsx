@@ -18,6 +18,7 @@ import styled from "styled-components";
 import { db } from "../../../firebase";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import VideoChatRoom from "../../VideoChat/VideoChatRoom";
 
 const Styledsvg = styled.svg`
   width: clamp(90%, 500px, 60%);
@@ -214,12 +215,12 @@ const Svg = styled.svg`
   width: 40px;
   height: 40px;
 `;
-const Chatpage = () => {
+const Chatpage = ({StartVideocall} : {StartVideocall : () => void}) => {
   const history = useHistory();
   const { roomid }: { roomid: string } = useParams();
   const matches = useMediaQuery("(max-width: 600px)");
-
   const [modalOpen, setmodalOpen] = useState(false);
+
 
   const OpenModal = () => {
     setmodalOpen(true);
@@ -252,6 +253,7 @@ const Chatpage = () => {
         ""
       )}
       {modalOpen && <Modal handleClose={CloseModal}></Modal>}
+      
       <Container>
         <Content className="View__Slider">
           <Left>
@@ -270,7 +272,7 @@ const Chatpage = () => {
             </Top>
             <Algolia />
           </Left>
-          <Right>{roomid ? <ChatBox></ChatBox> : <Undraw></Undraw>}</Right>
+          <Right>{roomid ? <ChatBox startvideocall = {StartVideocall}></ChatBox> : <Undraw></Undraw>}</Right>
         </Content>
       </Container>
     </>

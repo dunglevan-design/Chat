@@ -96,7 +96,7 @@ const DeleteRoom = styled.button`
     left: 35%;
   }
 `;
-const VideoCall = styled.button`
+const VideocallButton = styled.button`
   height: 40px;
   width: 40px;
   border-radius: 50%;
@@ -402,7 +402,7 @@ const Chatinput = (props: any) => {
   );
 };
 
-const ChatBox = () => {
+const ChatBox = ({startvideocall} : {startvideocall: () => void}) => {
   const { roomid }: { roomid: string } = useParams();
   const EndOfMessageList = useRef();
   const roomdetails = useRoomDetails(roomid);
@@ -430,9 +430,9 @@ const ChatBox = () => {
           <DeleteRoom>
             <img className="delete__svg" src={ExitSvg}></img>
           </DeleteRoom>
-          <VideoCall>
+          <VideocallButton onClick={() => startvideocall()}>
             <img src={videocallsvg}></img>
-          </VideoCall>
+          </VideocallButton>
         </RoomAction>
       </Top>
       <ChatView>

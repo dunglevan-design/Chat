@@ -161,9 +161,7 @@ export const SidebarMenuItem = ({
   const CurrentItem = useRef(null);
   const ToggleActive = () => {
     const ActiveItem = document.querySelector(".sidebar__menu__item.active");
-    console.log(ActiveItem);
     if (ActiveItem === CurrentItem.current) {
-      console.log("equals");
       return;
     }
     CurrentItem.current.classList.add("active");
