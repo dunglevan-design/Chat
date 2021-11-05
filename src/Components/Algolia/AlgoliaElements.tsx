@@ -1,11 +1,12 @@
 import styled from "styled-components";
 import { motion } from "framer-motion";
-import { useRef } from "react";
+import { useContext, useRef } from "react";
 import { useTimeElapsed } from "../CustomHooks/useTimeElapsed";
 import { Timestamp } from "firebase/firestore";
 import { useHistory, useParams } from "react-router-dom";
 import { room } from "./Algolia";
 import { useMediaQuery } from "../CustomHooks/useMediaQuery";
+import { context } from "../../Globals/GlobalStateProvider";
 //import { Link } from "react-router-dom";
 
 type roomHit = {
@@ -76,6 +77,15 @@ const Roomcard = styled(motion.div)`
   &:hover {
     background-color: #f2f2f2;
   }
+`;
+
+const VideochatSvg = styled.svg`
+  width: 35px;
+  height: 35px;
+  fill:#ff3366;
+  position: absolute;
+  top: 50%;
+  right: 10%;
 `;
 
 const Top = styled.div`
@@ -184,10 +194,12 @@ export const Hit = ({ hit }: { hit: roomHit }) => {
   const CurrentItem = useRef(null);
   const history = useHistory();
   const matches = useMediaQuery("(max-width: 600px)");
+  const { dispatch } = useContext(context);
+
   const EnterRoom = () => {
-    history.push(`/chat/${hit.path}`)
+    history.push(`/chat/${hit.path}`);
+    dispatch({ type: "ENTER_ROOM", roomid: hit.objectID });
     if (matches) {
-      
       (document.querySelector(".View__Slider") as HTMLElement).style.transform =
         "translateX(-100vw)";
     }
@@ -216,15 +228,18 @@ export const Room = ({
   latestmessage,
   latestmessagetime,
   latestmessageuser,
+  callinprogress,
 }: room) => {
   const CurrentItem = useRef(null);
   const returnedtime = Timestamp.fromMillis(latestmessagetime?.seconds * 1000);
   const messagetime = useTimeElapsed(returnedtime);
   const history = useHistory();
   const matches = useMediaQuery("(max-width:600px)");
+  const { dispatch } = useContext(context);
 
   const EnterRoom = () => {
     history.push(`/chat/rooms/${roomid}`);
+    dispatch({ type: "ENTER_ROOM", roomid: roomid });
     ToggleActive();
     if (matches) {
       (document.querySelector(".View__Slider") as HTMLElement).style.transform =
@@ -247,15 +262,26 @@ export const Room = ({
       className="roomcard"
       onClick={() => EnterRoom()}
     >
+      {callinprogress && (
+        <VideochatSvg
+          viewBox="0 0 28 28"
+          fill="none"
+        >
+          <path d="M5.25 5.5C3.45507 5.5 2 6.95508 2 8.75V19.25C2 21.0449 3.45507 22.5 5.25 22.5H14.75C16.5449 22.5 18 21.0449 18 19.25V8.75C18 6.95507 16.5449 5.5 14.75 5.5H5.25Z" />
+          <path d="M23.1232 20.6431L19.5 17.0935V10.9989L23.1121 7.3706C23.8988 6.58044 25.248 7.13753 25.248 8.25251V19.7502C25.248 20.8577 23.9143 21.4181 23.1232 20.6431Z" />
+        </VideochatSvg>
+      )}
       <Top>
         <Logo>
           <RoomImg src={roomphotoURL} />
           <RoomInfo>
             <RoomName>{roomname}</RoomName>
-            {latestmessageuser && <RoomAction>{latestmessageuser} writes</RoomAction>}
+            {latestmessageuser && (
+              <RoomAction>{latestmessageuser} writes</RoomAction>
+            )}
           </RoomInfo>
         </Logo>
-         {latestmessagetime && <RoomTimeStamp>{messagetime}</RoomTimeStamp>}
+        {latestmessagetime && <RoomTimeStamp>{messagetime}</RoomTimeStamp>}
       </Top>
       <Bottom>
         <RoomMessage>{latestmessage}</RoomMessage>

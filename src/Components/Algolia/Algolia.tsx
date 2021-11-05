@@ -38,6 +38,7 @@ export type room = {
   latestmessagetime: Timestamp;
   latestmessageuser: string;
   latestmessageuserphotoURL: string;
+  callinprogress: boolean;
   //TODO add roomtime: Timestamp: time until flush
 };
 const Algolia = () => {

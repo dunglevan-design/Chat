@@ -13,20 +13,37 @@ export const StyledVideoChatRoom = styled(motion.div)`
   position: relative;
   top: 0;
   left: 0;
-  width: clamp(50%, 600px, 90%);
-  height: 300px;
+  width: clamp(60%, 720px, 90%);
+  height: 400px;
   z-index: 100;
   background: #000000e1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  flex-wrap: wrap;
+  border-radius: 32px;
 `;
 
-export const Hangup = styled.button`
+export const Hangup = styled(motion.button)`
   position: absolute;
-  left: 50%;
   top: 10px;
+  right: 20px;
+  border: none;
+  background: none;
+  cursor: pointer;
 `;
-
+export const Hangupsvg = styled.svg`
+  fill: #ff3366;
+  width: 24px;
+  height: 24px;
+  
+`;
 export const Video = styled.video`
-  width: 300px;
+  width: 50%;
   height: 300px;
   background: #2c3e50;
+  border-radius: 16px;
+  object-fit: scale-down;
 `;

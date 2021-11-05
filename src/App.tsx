@@ -16,23 +16,42 @@ import Notificationspage from "./Components/Pages/Notifications";
 import Profilepage from "./Components/Pages/Profile";
 import Homepage from "./Components/Pages/Homepage";
 import VideoChatRoom from "./Components/VideoChat/VideoChatRoom";
+import { updateDoc, doc, getDoc } from "firebase/firestore";
+import { db } from "./firebase";
+import { useSpring } from "../node_modules/framer-motion/types";
 
 function App() {
   const [isopen, setIsopen] = useState(true);
   const { globalstate } = useContext(context);
   const user: User = globalstate.user;
+  const roomid = globalstate.currentRoom;
+  const [videocalling, setvideocalling] = useState(false);
+  const [caller, setcaller] = useState(true);
   const toggle = () => {
     setIsopen(!isopen);
   };
 
-  const [videocalling, setvideocalling] = useState(false);
-
-  const StartVideocall = () => {
+  const StartVideocall = async () => {
     setvideocalling(true);
+    /**If a call already in progress. 
+     * You are the callee. Otherwise you are the caller */
+    const callDoc = await getDoc(doc(db, "rooms", roomid));
+    if(callDoc.data().callinprogress){
+      setcaller(false);
+    }
+    else {
+      updateDoc(doc(db, "rooms", roomid), {
+        callinprogress: true,
+      });
+    }
+
   };
 
   const StopVideocall = () => {
     setvideocalling(false);
+    updateDoc(doc(db, "rooms", roomid), {
+      callinprogress: false,
+    });
   };
   return (
     <Router>
@@ -41,12 +60,12 @@ function App() {
         <>
           <Sidebar isopen={isopen} toggle={toggle} />
           {videocalling && (
-            <VideoChatRoom stopvideocall={StopVideocall}></VideoChatRoom>
+            <VideoChatRoom caller = {caller} stopvideocall={StopVideocall}></VideoChatRoom>
           )}
           <Switch>
             {/* <Redirect exact from="/" to="/chat/rooms/CJEJ9bI7mBP8WK8bVY01" /> */}
             <Route path="/chat/:rooms?/:roomid?">
-              <Chatpage StartVideocall={StartVideocall}/>
+              <Chatpage StartVideocall={StartVideocall} />
             </Route>
             <Route path="/notifications">
               <Notificationspage />

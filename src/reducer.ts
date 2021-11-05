@@ -1,9 +1,10 @@
 import { IdTokenResult, User } from "firebase/auth";
 
-export type action = { type: "SET_USER"; user: User };
+export type action = { type: "SET_USER"|"ENTER_ROOM" ; user?: User ; roomid?: string };
 
 export interface globalState {
   user: User;
+  currentRoom?: string;
 }
 
 const testuser: User = {
@@ -56,6 +57,11 @@ export function reducer(state: globalState, action: action): globalState {
         ...state,
         user: action.user,
       };
+    case "ENTER_ROOM":
+      return {
+        ...state,
+        currentRoom: action.roomid
+      }
     default:
       return state;
   }

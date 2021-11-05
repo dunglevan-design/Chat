@@ -307,7 +307,7 @@ export const Modal = ({ handleClose }) => {
       roomphotoURL: roomImage,
       roommessagecount: 0,
     });
-    joinRoombyId(newroom.id);
+    // joinRoombyId(newroom.id);
     handleClose();
 
   };

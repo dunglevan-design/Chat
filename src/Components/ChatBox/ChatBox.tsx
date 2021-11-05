@@ -16,8 +16,9 @@ import { context } from "../../Globals/GlobalStateProvider";
 import { useMediaQuery } from "../CustomHooks/useMediaQuery";
 import ExitSvg from "../../images/exit.svg";
 import videocallsvg from "../../images/videocall.svg";
+import { Actionsvg } from "./ChatBoxElements";
 
-const Container = styled.div`
+const Container = styled.div<{ callinprogress: boolean }>`
   display: flex;
   flex-direction: column;
   position: relative;
@@ -96,7 +97,7 @@ const DeleteRoom = styled.button`
     left: 35%;
   }
 `;
-const VideocallButton = styled.button`
+const VideocallButton = styled.button<{callinprogress:boolean}>`
   height: 40px;
   width: 40px;
   border-radius: 50%;
@@ -402,7 +403,7 @@ const Chatinput = (props: any) => {
   );
 };
 
-const ChatBox = ({startvideocall} : {startvideocall: () => void}) => {
+const ChatBox = ({ startvideocall }: { startvideocall: () => void }) => {
   const { roomid }: { roomid: string } = useParams();
   const EndOfMessageList = useRef();
   const roomdetails = useRoomDetails(roomid);
@@ -410,7 +411,7 @@ const ChatBox = ({startvideocall} : {startvideocall: () => void}) => {
   const user = auth.currentUser;
 
   return (
-    <Container>
+    <Container callinprogress={roomdetails?.callinprogress}>
       {/* <Undraw /> */}
       <Top>
         <RoomInfo>
@@ -420,18 +421,34 @@ const ChatBox = ({startvideocall} : {startvideocall: () => void}) => {
         </RoomInfo>
         <RoomAction>
           <CopyRoomid>
-            <svg width="16" height="16" viewBox="0 0 19 22" fill="none">
-              <path
-                d="M14 0H2C0.9 0 0 0.9 0 2V16H2V2H14V0ZM13 4L19 10V20C19 21.1 18.1 22 17 22H5.99C4.89 22 4 21.1 4 20L4.01 6C4.01 4.9 4.9 4 6 4H13ZM12 11H17.5L12 5.5V11Z"
-                fill="black"
-              />
-            </svg>
+            <Actionsvg width="16" height="16" viewBox="0 0 19 22" fill="none">
+              <path d="M14 0H2C0.9 0 0 0.9 0 2V16H2V2H14V0ZM13 4L19 10V20C19 21.1 18.1 22 17 22H5.99C4.89 22 4 21.1 4 20L4.01 6C4.01 4.9 4.9 4 6 4H13ZM12 11H17.5L12 5.5V11Z" />
+            </Actionsvg>
           </CopyRoomid>
           <DeleteRoom>
-            <img className="delete__svg" src={ExitSvg}></img>
+            <Actionsvg
+              id="Layer_1"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 512 512"
+            >
+              <path
+                d="M476.352,247.979l-85.333-74.667c-3.136-2.731-7.616-3.392-11.435-1.685c-3.819,1.728-6.251,5.525-6.251,9.707v32H256
+				c-5.888,0-10.667,4.779-10.667,10.667v64c0,5.888,4.779,10.667,10.667,10.667h117.333v32c0,4.181,2.453,7.979,6.251,9.707
+				c1.408,0.64,2.923,0.96,4.416,0.96c2.539,0,5.035-0.896,7.019-2.645l85.333-74.667c2.325-2.027,3.648-4.949,3.648-8.021
+				S478.677,250.005,476.352,247.979z"
+              />
+              <path
+                d="M341.333,320H256c-17.643,0-32-14.357-32-32v-64c0-17.643,14.357-32,32-32h85.333c5.888,0,10.667-4.779,10.667-10.667V32
+				c0-17.643-14.357-32-32-32H64C46.357,0,32,14.357,32,32v448c0,17.643,14.357,32,32,32h256c17.643,0,32-14.357,32-32V330.667
+				C352,324.779,347.221,320,341.333,320z"
+              />
+            </Actionsvg>
           </DeleteRoom>
-          <VideocallButton onClick={() => startvideocall()}>
-            <img src={videocallsvg}></img>
+          <VideocallButton callinprogress = {roomdetails?.callinprogress} onClick={() => startvideocall()}>
+            <Actionsvg callinprogress = {roomdetails?.callinprogress} viewBox="0 0 28 28" fill="none">
+              <path d="M5.25 5.5C3.45507 5.5 2 6.95508 2 8.75V19.25C2 21.0449 3.45507 22.5 5.25 22.5H14.75C16.5449 22.5 18 21.0449 18 19.25V8.75C18 6.95507 16.5449 5.5 14.75 5.5H5.25Z" />
+              <path d="M23.1232 20.6431L19.5 17.0935V10.9989L23.1121 7.3706C23.8988 6.58044 25.248 7.13753 25.248 8.25251V19.7502C25.248 20.8577 23.9143 21.4181 23.1232 20.6431Z" />
+            </Actionsvg>
           </VideocallButton>
         </RoomAction>
       </Top>
