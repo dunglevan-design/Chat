@@ -62,10 +62,10 @@
 }
 
 .roomcard.active {
-    background-color: #EAF3FF;
+    background-color: var(--active-color);
 }
 .roomcard.active:hover {
-    background-color: #EAF3FF;
+    background-color: var(--accent-color);
 }
 
 

@@ -33,7 +33,7 @@ const Resetbutton = styled(motion.button)`
   width: 40px;
   height: 40px;
   &:hover {
-    background-color: #f2f2f2;
+    background-color: var(--accent-color);
   }
   padding: 10px;
   display: flex;
@@ -44,6 +44,7 @@ const Resetbutton = styled(motion.button)`
 const SvgReset = styled.svg`
   width: 100%;
   height: 100%;
+  fill: var(--text-color-primary);
 `;
 
 export const ResetButton = ({ Reset }: { Reset: () => void }) => {
@@ -56,7 +57,6 @@ export const ResetButton = ({ Reset }: { Reset: () => void }) => {
       >
         <path
           d="M16 7H3.83L9.42 1.41L8 0L0 8L8 16L9.41 14.59L3.83 9H16V7Z"
-          fill="black"
         />
       </SvgReset>
     </Resetbutton>
@@ -65,6 +65,7 @@ export const ResetButton = ({ Reset }: { Reset: () => void }) => {
 
 export const Container = styled.div`
   position: relative;
+  /* background: var(--bg); */
 `;
 const Roomcard = styled(motion.div)`
   display: flex;
@@ -75,7 +76,7 @@ const Roomcard = styled(motion.div)`
   padding: 10px 0;
   cursor: pointer;
   &:hover {
-    background-color: #f2f2f2;
+    background-color: var(--accent-color);
   }
 `;
 
@@ -107,6 +108,7 @@ const RoomInfo = styled.div`
 `;
 const RoomName = styled.h2`
   font-size: 20px;
+  color: var(--text-color-primary);
 `;
 
 const RoomAction = styled.p`
@@ -118,6 +120,7 @@ const RoomTimeStamp = styled.p`
   position: absolute;
   top: 16px;
   right: 10px;
+  color: var(--text-color-secondary);
 `;
 
 const Bottom = styled.div`
@@ -125,6 +128,8 @@ const Bottom = styled.div`
 `;
 const RoomMessage = styled.p`
   overflow-wrap: break-word;
+  color: var(--text-color-secondary);
+
 `;
 
 export const RoomlistContainer = styled.div`
@@ -157,7 +162,7 @@ const HitItem = styled(motion.div)`
   padding: 10px 0;
   cursor: pointer;
   &:hover {
-    background-color: #f2f2f2;
+    background-color: var(--accent-color);
   }
 `;
 
@@ -176,10 +181,12 @@ const HitInfo = styled.div`
 `;
 const HitRoomname = styled.h2`
   font-size: 18px;
+  color: var(--text-color-primary);
 `;
 
 const HitRoomtype = styled.p`
   overflow-wrap: break-word;
+  color: var(--text-color-secondary);
 `;
 
 export const Hitwrapper = styled.div`

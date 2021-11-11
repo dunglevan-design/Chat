@@ -1,10 +1,11 @@
 import { IdTokenResult, User } from "firebase/auth";
 
-export type action = { type: "SET_USER"|"ENTER_ROOM" ; user?: User ; roomid?: string };
+export type action = { type: "SET_USER"|"ENTER_ROOM"|"SWITCH_THEME" ; user?: User ; roomid?: string; theme?:"DARK"|"LIGHT" };
 
 export interface globalState {
   user: User;
   currentRoom?: string;
+  currentTheme? : "DARK" | "LIGHT";
 }
 
 const testuser: User = {
@@ -48,6 +49,7 @@ const testuser: User = {
 
 export const initialState: globalState = {
   user: null,
+  currentTheme: "LIGHT",
 };
 
 export function reducer(state: globalState, action: action): globalState {
@@ -61,6 +63,11 @@ export function reducer(state: globalState, action: action): globalState {
       return {
         ...state,
         currentRoom: action.roomid
+      }
+    case "SWITCH_THEME":
+      return {
+        ...state,
+        currentTheme: action.theme,
       }
     default:
       return state;

@@ -10,7 +10,14 @@ import {
 } from "@mui/material";
 import "./Chatpage.css";
 import { useContext, useState } from "react";
-import { addDoc, collection, getDoc, doc, updateDoc, setDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  getDoc,
+  doc,
+  updateDoc,
+  setDoc,
+} from "firebase/firestore";
 import { db } from "../../../firebase";
 import { context } from "../../../Globals/GlobalStateProvider";
 
@@ -42,7 +49,7 @@ export const Left = styled.div`
   display: flex;
   height: 100%;
   width: 50%;
-  background: white;
+  background: var(--bg-widget);
   flex-direction: column;
   padding: 10px;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
@@ -58,7 +65,7 @@ export const Right = styled.div`
   height: 100%;
   width: 50%;
   display: flex;
-  background: white;
+  background: var(--bg-widget);
   flex-direction: column;
   padding: 10px;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
@@ -80,7 +87,9 @@ export const Top = styled.div`
   justify-content: space-between;
 `;
 
-export const Title = styled.h1``;
+export const Title = styled.h1`
+  color: var(--text-color-primary);
+`;
 
 export const NewChatButton = styled.button`
   display: flex;
@@ -122,6 +131,7 @@ const StyledBackdrop = styled(motion.div)`
   & .modal__wrapper {
     width: clamp(50%, 700px, 90%);
     height: min(70%, 500px);
+    perspective: 1000px;
   }
 `;
 export const Backdrop = ({ children, onClick }) => {
@@ -147,7 +157,7 @@ const StyledModal = styled(motion.div)`
   flex-direction: column;
   align-items: center;
   border: none;
-  background: linear-gradient(180deg, #f3f3fb 0%, #fdfbfd 100%);
+  background: var(--bg);
   box-shadow: 6px 6px 25px rgba(42, 139, 242, 0.15),
     4px 4px 25px rgba(42, 139, 242, 0.05),
     10px 6px 25px rgba(42, 139, 242, 0.15);
@@ -195,20 +205,23 @@ const rotate = {
   rotatein: {
     rotateY: 0,
     transition: {
-      duration: 1,
-      delay: 1,
+      duration: 0.5,
+      delay: 0.5,
+      ease: "linear",
     },
   },
   rotateout: {
     rotateY: 90,
     transition: {
-      duration: 1,
+      ease: "linear",
+      duration: 0.5,
     },
   },
   rotateout2: {
     rotateY: -90,
     transition: {
-      duration: 1,
+      ease: "linear",
+      duration: 0.5,
     },
   },
 };
@@ -272,33 +285,28 @@ export const Modal = ({ handleClose }) => {
   const { globalstate } = useContext(context);
   const user = globalstate.user;
   const [message, setmessage] = useState("");
-
-  const roomImage =
-    "https://avatars.dicebear.com/api/adventurer/your-custom-seed.svg";
-
-
+  const roomImage = `https://avatars.dicebear.com/api/adventurer/${Math.random()}.svg`;
 
   const joinRoombyId = async (roomid) => {
     if (await validRoomid(roomid)) {
       setmessage("room created sucessfully");
       const snapshot = await getDoc(doc(db, "users", user.uid));
       const roomlist = snapshot.data()?.privateRooms;
-      if (!roomlist){
+      if (!roomlist) {
         setDoc(doc(db, "users", user.uid), {
           privateRooms: [roomid],
-        })
-      } 
-      else {
+        });
+      } else {
         if (roomlist.includes(roomid)) return;
         roomlist.push(roomid);
-        setDoc(doc(db, "users",user.uid), {
+        setDoc(doc(db, "users", user.uid), {
           privateRooms: roomlist,
         });
       }
     } else {
       setmessage("room doesn't exist");
     }
-  }
+  };
   const HandleSubmit = async (e) => {
     e.preventDefault();
     const newroom = await addDoc(collection(db, "rooms"), {
@@ -309,7 +317,6 @@ export const Modal = ({ handleClose }) => {
     });
     // joinRoombyId(newroom.id);
     handleClose();
-
   };
 
   const validRoomid = async (roomid) => {
@@ -323,7 +330,6 @@ export const Modal = ({ handleClose }) => {
   const Joinroom = async (e) => {
     e.preventDefault();
     joinRoombyId(roomid);
-    
   };
 
   return (
@@ -397,6 +403,7 @@ export const Modal = ({ handleClose }) => {
           onClick={(e) => e.stopPropagation()}
           variants={rotate}
           animate={!flipmodal ? "rotateout2" : "rotatein"}
+          initial="rotateout2"
         >
           <Form onSubmit={(e) => Joinroom(e)}>
             <Group>
