@@ -223,6 +223,7 @@ export const DarklightButton = ({ open }: { open: boolean }) => {
   const Moonpath =
     "M14.5 29C14.5 45.0163 29 58 29 58C12.9837 58 0 45.0163 0 29C0 12.9837 12.9837 0 29 0C29 0 14.5 12.9837 14.5 29Z";
 
+  const currentPath = isDark ? Moonpath : Sunpath;
   const labelvariants = {
     initial: { opacity: 0 },
     open: { opacity: 1, transition: { duration: 0.4 } },
@@ -268,7 +269,7 @@ export const DarklightButton = ({ open }: { open: boolean }) => {
       >
         <path
           id="Sun"
-          d="M58 29C58 45.0163 45.0163 58 29 58C12.9837 58 0 45.0163 0 29C0 12.9837 12.9837 0 29 0C45.0163 0 58 12.9837 58 29Z"
+          d= {currentPath}
           fill="#FFD600"
         />
       </svg>
