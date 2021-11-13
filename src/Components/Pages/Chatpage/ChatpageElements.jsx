@@ -18,8 +18,9 @@ import {
   updateDoc,
   setDoc,
 } from "firebase/firestore";
-import { db } from "../../../firebase";
+import { db, messaging } from "../../../firebase";
 import { context } from "../../../Globals/GlobalStateProvider";
+import { getToken } from "firebase/messaging";
 
 export const Container = styled.div`
   display: flex;
@@ -287,22 +288,82 @@ export const Modal = ({ handleClose }) => {
   const [message, setmessage] = useState("");
   const roomImage = `https://avatars.dicebear.com/api/adventurer/${Math.random()}.svg`;
 
+  // add user to room and room to user.
   const joinRoombyId = async (roomid) => {
+    const SubscribeToRoom = async (token, roomid) => {
+      console.log(`sending ${token} subscribing to ${roomid}`);
+      const data = {
+        token: token,
+        roomid: roomid,
+      }
+      const url =
+        "https://us-central1-chat-b7198.cloudfunctions.net/subscribeToTopic";
+      const response = await fetch(url, {
+        method: "POST",
+        mode: "cors",
+        cache: "no-cache",
+        headers: {
+          "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        referrerPolicy: "no-referrer",
+        body: JSON.stringify(data),
+      });
+      console.log(await response.json);
+    };
     if (await validRoomid(roomid)) {
       setmessage("room created sucessfully");
-      const snapshot = await getDoc(doc(db, "users", user.uid));
+      const userDocref = doc(db, "users", user.uid);
+      const roomDocref = doc(db, "rooms", roomid);
+      /**
+       * Add roomid to user's doc.
+       * 1. get current roomlist
+       * 2. Check if roomlist exist.
+       * 2. add new room to the room list
+       */
+      const snapshot = await getDoc(userDocref);
       const roomlist = snapshot.data()?.privateRooms;
       if (!roomlist) {
-        setDoc(doc(db, "users", user.uid), {
+        updateDoc(userDocref, {
           privateRooms: [roomid],
         });
       } else {
         if (roomlist.includes(roomid)) return;
         roomlist.push(roomid);
-        setDoc(doc(db, "users", user.uid), {
+        updateDoc(userDocref, {
           privateRooms: roomlist,
         });
       }
+
+      /**
+       * add current user to room's doc
+       * 1. get current user list
+       * 2. add current user to userlist
+       */
+      const roomsnapshot = await getDoc(roomDocref);
+      if (roomsnapshot.data().users) {
+        await updateDoc(roomDocref, {
+          users: [...roomsnapshot.data().users, user.uid],
+        });
+      } else {
+        await updateDoc(roomDocref, {
+          users: [user.uid],
+        });
+      }
+      /**
+       * Subscribe to the room, so we can send notifications.
+       */
+      getToken(messaging, {
+        vapidKey:
+          "BLFRbbKh7i-skCjTBESy0m4xdv_644zN92do2g98YC0BUt-SBgYcj0hb2NFE584YDKAZChVS01AfgMsEpT6Xgs8",
+      })
+        .then(async (currentToken) => {
+          //Subscribe messaging instance to topic.
+          SubscribeToRoom(currentToken, roomid);
+        })
+        .catch((e) => {
+          console.log("error while retrieving the token", e);
+        });
     } else {
       setmessage("room doesn't exist");
     }
@@ -315,7 +376,9 @@ export const Modal = ({ handleClose }) => {
       roomphotoURL: roomImage,
       roommessagecount: 0,
     });
-    // joinRoombyId(newroom.id);
+    if (roomtype === "private") {
+      await joinRoombyId(newroom.id);
+    }
     handleClose();
   };
 
