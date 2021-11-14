@@ -296,8 +296,9 @@ export const Modal = ({ handleClose }) => {
         token: token,
         roomid: roomid,
       }
-      const url =
-        "https://us-central1-chat-b7198.cloudfunctions.net/subscribeToTopic";
+      // const url =
+      //   "https://us-central1-chat-b7198.cloudfunctions.net/subscribeToTopic";
+      const url = "http://localhost:5001/chat-b7198/us-central1/subscribeToTopic";
       const response = await fetch(url, {
         method: "POST",
         mode: "cors",

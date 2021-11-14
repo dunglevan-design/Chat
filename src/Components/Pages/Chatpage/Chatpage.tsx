@@ -19,7 +19,7 @@ import { db, messaging } from "../../../firebase";
 import { useContext, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import VideoChatRoom from "../../VideoChat/VideoChatRoom";
-import { getToken } from "firebase/messaging";
+import { deleteToken, getToken } from "firebase/messaging";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { context } from "../../../Globals/GlobalStateProvider";
 
@@ -253,6 +253,7 @@ const Chatpage = ({ StartVideocall }: { StartVideocall: () => void }) => {
   //save token to database.
 
   const saveToken = async () => {
+    await deleteToken(messaging);
     getToken(messaging, {
       vapidKey:
         "BLFRbbKh7i-skCjTBESy0m4xdv_644zN92do2g98YC0BUt-SBgYcj0hb2NFE584YDKAZChVS01AfgMsEpT6Xgs8",

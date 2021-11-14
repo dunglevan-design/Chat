@@ -2,7 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { GoogleAuthProvider, getAuth, FacebookAuthProvider, } from "firebase/auth";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
-import {getMessaging, getToken } from "firebase/messaging"
+import {getMessaging, onMessage, deleteToken } from "firebase/messaging"
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -29,6 +29,14 @@ export const auth = getAuth();
 // Initialize messaging to request notifications.
 
 export const messaging = getMessaging(app);
+
+  /**
+   * onMessage, display notification card for 2seconds.
+   */
+   onMessage(messaging, (payload) => {
+    console.log("Message received: ", payload)
+  })
+
 
 // Add the public key generated from the console here.
 /**Only works on build version. For testing, generate token manually 
