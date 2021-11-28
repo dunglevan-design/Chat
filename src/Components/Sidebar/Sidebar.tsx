@@ -19,13 +19,14 @@ import {
   SidebarButton,
   MenuIcon,
   MenuIconButton,
-  LogoutContainer,
   MenuLabel,
+  ButtonContainer,
+  DarklightButton,
 } from "./SidebarElements";
 import Errorsvg from "../../images/Error.svg";
-import { useSvgFromString } from "../CustomHooks/useSvgFromString";
 import { useMediaQuery } from "../CustomHooks/useMediaQuery";
 import { motion } from "framer-motion";
+import "./Sidebar.css";
 
 type SidebarProps = {
   isopen: boolean;
@@ -145,21 +146,9 @@ const Sidebar = ({ isopen, toggle }: SidebarProps) => {
             >
               <SidebarMenuItem
                 isopen={isopen}
-                to="/gettingstarted"
-                label="HOME"
-                icon="play"
-              ></SidebarMenuItem>
-              <SidebarMenuItem
-                isopen={isopen}
                 to="/chat"
                 label="CHAT"
                 icon="chat"
-              ></SidebarMenuItem>
-              <SidebarMenuItem
-                isopen={isopen}
-                to="/notifications"
-                label="NOTIFICATIONS"
-                icon="bell"
               ></SidebarMenuItem>
               <SidebarMenuItem
                 isopen={isopen}
@@ -167,8 +156,10 @@ const Sidebar = ({ isopen, toggle }: SidebarProps) => {
                 label="PROFILE"
                 icon="person"
               ></SidebarMenuItem>
-            </SidebarMenu>
-            <LogoutContainer
+              <DarklightButton open = {isopen}/>
+            </SidebarMenu>        
+
+            <ButtonContainer
               initial={{ opacity: 0 }}
               animate={{
                 opacity: 1,
@@ -184,7 +175,7 @@ const Sidebar = ({ isopen, toggle }: SidebarProps) => {
                 label="LOG OUT"
                 icon="power"
               />
-            </LogoutContainer>
+            </ButtonContainer>
           </motion.div>
         </SidebarContainer>
       ) : (

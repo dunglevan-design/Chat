@@ -17,8 +17,10 @@ import Profilepage from "./Components/Pages/Profile";
 import Homepage from "./Components/Pages/Homepage";
 import VideoChatRoom from "./Components/VideoChat/VideoChatRoom";
 import { updateDoc, doc, getDoc } from "firebase/firestore";
-import { db } from "./firebase";
+import { db, messaging } from "./firebase";
 import { useSpring } from "../node_modules/framer-motion/types";
+import Notification from "./Components/Notification/Notification";
+import { onMessage } from "firebase/messaging";
 
 function App() {
   const [isopen, setIsopen] = useState(true);
@@ -27,6 +29,7 @@ function App() {
   const roomid = globalstate.currentRoom;
   const [videocalling, setvideocalling] = useState(false);
   const [caller, setcaller] = useState(true);
+  // const [notificationMessage, setnotificationMessage] = useState("");
   const toggle = () => {
     setIsopen(!isopen);
   };
@@ -53,6 +56,11 @@ function App() {
       callinprogress: false,
     });
   };
+
+  /**
+   * onMessage, display notification card for 2seconds.
+   */
+
   return (
     <Router>
       <GlobalStyle />
@@ -62,6 +70,7 @@ function App() {
           {videocalling && (
             <VideoChatRoom caller = {caller} stopvideocall={StopVideocall}></VideoChatRoom>
           )}
+          <Notification />
           <Switch>
             {/* <Redirect exact from="/" to="/chat/rooms/CJEJ9bI7mBP8WK8bVY01" /> */}
             <Route path="/chat/:rooms?/:roomid?">

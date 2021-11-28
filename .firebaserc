@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "chat-b7198"
-  }
+    "default": "chat-b7198",
+    "dev": "chat-b7198"
+  },
+  "targets": {}
 }

@@ -10,9 +10,17 @@ import {
 } from "@mui/material";
 import "./Chatpage.css";
 import { useContext, useState } from "react";
-import { addDoc, collection, getDoc, doc, updateDoc, setDoc } from "firebase/firestore";
-import { db } from "../../../firebase";
+import {
+  addDoc,
+  collection,
+  getDoc,
+  doc,
+  updateDoc,
+  setDoc,
+} from "firebase/firestore";
+import { db, messaging } from "../../../firebase";
 import { context } from "../../../Globals/GlobalStateProvider";
+import { getToken } from "firebase/messaging";
 
 export const Container = styled.div`
   display: flex;
@@ -42,7 +50,7 @@ export const Left = styled.div`
   display: flex;
   height: 100%;
   width: 50%;
-  background: white;
+  background: var(--bg-widget);
   flex-direction: column;
   padding: 10px;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
@@ -58,7 +66,7 @@ export const Right = styled.div`
   height: 100%;
   width: 50%;
   display: flex;
-  background: white;
+  background: var(--bg-widget);
   flex-direction: column;
   padding: 10px;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
@@ -80,7 +88,9 @@ export const Top = styled.div`
   justify-content: space-between;
 `;
 
-export const Title = styled.h1``;
+export const Title = styled.h1`
+  color: var(--text-color-primary);
+`;
 
 export const NewChatButton = styled.button`
   display: flex;
@@ -122,6 +132,7 @@ const StyledBackdrop = styled(motion.div)`
   & .modal__wrapper {
     width: clamp(50%, 700px, 90%);
     height: min(70%, 500px);
+    perspective: 1000px;
   }
 `;
 export const Backdrop = ({ children, onClick }) => {
@@ -147,7 +158,7 @@ const StyledModal = styled(motion.div)`
   flex-direction: column;
   align-items: center;
   border: none;
-  background: linear-gradient(180deg, #f3f3fb 0%, #fdfbfd 100%);
+  background: var(--bg);
   box-shadow: 6px 6px 25px rgba(42, 139, 242, 0.15),
     4px 4px 25px rgba(42, 139, 242, 0.05),
     10px 6px 25px rgba(42, 139, 242, 0.15);
@@ -195,20 +206,23 @@ const rotate = {
   rotatein: {
     rotateY: 0,
     transition: {
-      duration: 1,
-      delay: 1,
+      duration: 0.5,
+      delay: 0.5,
+      ease: "linear",
     },
   },
   rotateout: {
     rotateY: 90,
     transition: {
-      duration: 1,
+      ease: "linear",
+      duration: 0.5,
     },
   },
   rotateout2: {
     rotateY: -90,
     transition: {
-      duration: 1,
+      ease: "linear",
+      duration: 0.5,
     },
   },
 };
@@ -272,33 +286,89 @@ export const Modal = ({ handleClose }) => {
   const { globalstate } = useContext(context);
   const user = globalstate.user;
   const [message, setmessage] = useState("");
+  const roomImage = `https://avatars.dicebear.com/api/adventurer/${Math.random()}.svg`;
 
-  const roomImage =
-    "https://avatars.dicebear.com/api/adventurer/your-custom-seed.svg";
-
-
-
+  // add user to room and room to user.
   const joinRoombyId = async (roomid) => {
+    const SubscribeToRoom = async (token, roomid) => {
+      console.log(`sending ${token} subscribing to ${roomid}`);
+      const data = {
+        token: token,
+        roomid: roomid,
+      }
+      // const url =
+      //   "https://us-central1-chat-b7198.cloudfunctions.net/subscribeToTopic";
+      const url = "http://localhost:5001/chat-b7198/us-central1/subscribeToTopic";
+      const response = await fetch(url, {
+        method: "POST",
+        mode: "cors",
+        cache: "no-cache",
+        headers: {
+          "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        referrerPolicy: "no-referrer",
+        body: JSON.stringify(data),
+      });
+      console.log(await response.json);
+    };
     if (await validRoomid(roomid)) {
       setmessage("room created sucessfully");
-      const snapshot = await getDoc(doc(db, "users", user.uid));
+      const userDocref = doc(db, "users", user.uid);
+      const roomDocref = doc(db, "rooms", roomid);
+      /**
+       * Add roomid to user's doc.
+       * 1. get current roomlist
+       * 2. Check if roomlist exist.
+       * 2. add new room to the room list
+       */
+      const snapshot = await getDoc(userDocref);
       const roomlist = snapshot.data()?.privateRooms;
-      if (!roomlist){
-        setDoc(doc(db, "users", user.uid), {
+      if (!roomlist) {
+        updateDoc(userDocref, {
           privateRooms: [roomid],
-        })
-      } 
-      else {
+        });
+      } else {
         if (roomlist.includes(roomid)) return;
         roomlist.push(roomid);
-        setDoc(doc(db, "users",user.uid), {
+        updateDoc(userDocref, {
           privateRooms: roomlist,
         });
       }
+
+      /**
+       * add current user to room's doc
+       * 1. get current user list
+       * 2. add current user to userlist
+       */
+      const roomsnapshot = await getDoc(roomDocref);
+      if (roomsnapshot.data().users) {
+        await updateDoc(roomDocref, {
+          users: [...roomsnapshot.data().users, user.uid],
+        });
+      } else {
+        await updateDoc(roomDocref, {
+          users: [user.uid],
+        });
+      }
+      /**
+       * Subscribe to the room, so we can send notifications.
+       */
+      getToken(messaging, {
+        vapidKey:
+          "BLFRbbKh7i-skCjTBESy0m4xdv_644zN92do2g98YC0BUt-SBgYcj0hb2NFE584YDKAZChVS01AfgMsEpT6Xgs8",
+      })
+        .then(async (currentToken) => {
+          //Subscribe messaging instance to topic.
+          SubscribeToRoom(currentToken, roomid);
+        })
+        .catch((e) => {
+          console.log("error while retrieving the token", e);
+        });
     } else {
       setmessage("room doesn't exist");
     }
-  }
+  };
   const HandleSubmit = async (e) => {
     e.preventDefault();
     const newroom = await addDoc(collection(db, "rooms"), {
@@ -307,9 +377,10 @@ export const Modal = ({ handleClose }) => {
       roomphotoURL: roomImage,
       roommessagecount: 0,
     });
-    // joinRoombyId(newroom.id);
+    if (roomtype === "private") {
+      await joinRoombyId(newroom.id);
+    }
     handleClose();
-
   };
 
   const validRoomid = async (roomid) => {
@@ -323,7 +394,6 @@ export const Modal = ({ handleClose }) => {
   const Joinroom = async (e) => {
     e.preventDefault();
     joinRoombyId(roomid);
-    
   };
 
   return (
@@ -397,6 +467,7 @@ export const Modal = ({ handleClose }) => {
           onClick={(e) => e.stopPropagation()}
           variants={rotate}
           animate={!flipmodal ? "rotateout2" : "rotatein"}
+          initial="rotateout2"
         >
           <Form onSubmit={(e) => Joinroom(e)}>
             <Group>

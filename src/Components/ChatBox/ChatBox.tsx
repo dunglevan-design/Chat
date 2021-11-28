@@ -54,12 +54,14 @@ const RoomImg = styled.img`
 const Roomname = styled.h2`
   font-size: 18px;
   align-self: flex-end;
+  color: var(--text-color-primary);
 `;
 
 const Roomtype = styled.p`
   font-size: 16px;
   align-self: flex-start;
   margin-top: -5px;
+  color: var(--text-color-secondary);
 `;
 const RoomAction = styled.div`
   display: flex;
@@ -77,6 +79,11 @@ const CopyRoomid = styled.button`
   height: 40px;
   width: 40px;
   cursor: pointer;
+  background: var(--active-color);
+
+  & svg {
+    fill: var(--text-color-primary);
+  }
 `;
 const DeleteRoom = styled.button`
   height: 40px;
@@ -89,15 +96,13 @@ const DeleteRoom = styled.button`
   justify-content: center;
   position: relative;
   cursor: pointer;
+  background: var(--active-color);
 
-  & img {
-    width: 16px;
-    height: 16px;
-    position: absolute;
-    left: 35%;
+  & svg {
+    fill: var(--text-color-primary);
   }
 `;
-const VideocallButton = styled.button<{callinprogress:boolean}>`
+const VideocallButton = styled.button<{ callinprogress: boolean }>`
   height: 40px;
   width: 40px;
   border-radius: 50%;
@@ -108,7 +113,8 @@ const VideocallButton = styled.button<{callinprogress:boolean}>`
   justify-content: center;
   position: relative;
   cursor: pointer;
-
+  background: var(--active-color);
+  
   & img {
     width: 18px;
     height: 18px;
@@ -187,6 +193,8 @@ const Input = styled.input`
   font-size: 16px;
   outline: none;
   border: none;
+  background: none;
+  color: var(--text-color-primary);
 `;
 
 const AddContainer = styled.div`
@@ -444,8 +452,15 @@ const ChatBox = ({ startvideocall }: { startvideocall: () => void }) => {
               />
             </Actionsvg>
           </DeleteRoom>
-          <VideocallButton callinprogress = {roomdetails?.callinprogress} onClick={() => startvideocall()}>
-            <Actionsvg callinprogress = {roomdetails?.callinprogress} viewBox="0 0 28 28" fill="none">
+          <VideocallButton
+            callinprogress={roomdetails?.callinprogress}
+            onClick={() => startvideocall()}
+          >
+            <Actionsvg
+              callinprogress={roomdetails?.callinprogress}
+              viewBox="0 0 28 28"
+              fill="none"
+            >
               <path d="M5.25 5.5C3.45507 5.5 2 6.95508 2 8.75V19.25C2 21.0449 3.45507 22.5 5.25 22.5H14.75C16.5449 22.5 18 21.0449 18 19.25V8.75C18 6.95507 16.5449 5.5 14.75 5.5H5.25Z" />
               <path d="M23.1232 20.6431L19.5 17.0935V10.9989L23.1121 7.3706C23.8988 6.58044 25.248 7.13753 25.248 8.25251V19.7502C25.248 20.8577 23.9143 21.4181 23.1232 20.6431Z" />
             </Actionsvg>

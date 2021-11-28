@@ -8,7 +8,7 @@ import GuestLogo from "../../images/Guest.svg";
 export const LoginBoard = styled.div`
   width: clamp(50%, 700px, 90%);
   height: 500px;
-  background: white;
+  background: var(--bg-widget);
   position: absolute;
   padding: 32px;
   top: 50%;
@@ -31,7 +31,7 @@ export const LoginLogoContainer = styled.div`
 
 export const LoginLogoTitle = styled.h1`
   font-size: 36px;
-  color: var(--text-primary);
+  color: var(--text-color-primary);
   margin-right: 10px;
 `;
 
