@@ -21,7 +21,6 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore() 
-connectFirestoreEmulator(db, 'localhost', 8080);
 export const Googleprovider = new GoogleAuthProvider();
 export const Facebookprovider = new FacebookAuthProvider();
 export const auth = getAuth();

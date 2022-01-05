@@ -1,7 +1,9 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-
 import * as corsLib from "cors";
+import { firestore } from "firebase-admin";
+const Filter = require("bad-words")
+
 const cors = corsLib();
 
 var serviceAccount = require("../Keys/chat-b7198-firebase-adminsdk-y9ec3-c22a578f15.json");
@@ -91,3 +93,18 @@ export const sendMessageNotification = functions.firestore
         console.log("Error sending message:", error);
       });
   });
+
+
+  export const detectEvilUsers = functions.firestore.document("rooms/{roomid}/messages/{messageid}").onCreate(async (doc, ctx) => {
+    console.log("detecting evil users")
+    const filter = new Filter();
+    
+    const {content, userid} = doc.data();
+
+    if (filter.isProfane(content)) {
+      const cleaned = filter.clean(content);
+      await doc.ref.update({content: `This person has been banned for saying bad words ... ${cleaned}`});
+      await firestore().collection("banned").doc(userid).set({});
+    }
+
+  })

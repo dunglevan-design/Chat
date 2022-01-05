@@ -18,9 +18,7 @@ import Homepage from "./Components/Pages/Homepage";
 import VideoChatRoom from "./Components/VideoChat/VideoChatRoom";
 import { updateDoc, doc, getDoc } from "firebase/firestore";
 import { db, messaging } from "./firebase";
-import { useSpring } from "../node_modules/framer-motion/types";
 import Notification from "./Components/Notification/Notification";
-import { onMessage } from "firebase/messaging";
 
 function App() {
   const [isopen, setIsopen] = useState(true);
@@ -70,7 +68,6 @@ function App() {
           {videocalling && (
             <VideoChatRoom caller = {caller} stopvideocall={StopVideocall}></VideoChatRoom>
           )}
-          <Notification />
           <Switch>
             {/* <Redirect exact from="/" to="/chat/rooms/CJEJ9bI7mBP8WK8bVY01" /> */}
             <Route path="/chat/:rooms?/:roomid?">
