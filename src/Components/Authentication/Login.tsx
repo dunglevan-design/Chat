@@ -17,38 +17,56 @@ import {
   signInAnonymously,
   onAuthStateChanged,
 } from "firebase/auth";
-import { auth, Facebookprovider, Googleprovider } from "../../firebase";
+import { auth, db, Facebookprovider, Googleprovider } from "../../firebase";
 import { useContext, useEffect, useState } from "react";
 import { context } from "../../Globals/GlobalStateProvider";
 import Errorsvg from "../../images/Error.svg";
 import { createAvatar } from "@dicebear/avatars";
 import * as style from '@dicebear/micah';
+import { doc, getDoc } from "firebase/firestore";
 
 const Login = () => {
   const { dispatch } = useContext(context);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async(user) => {
         if (user) {
-          // User is signed in, see docs for a list of available properties
-          // https://firebase.google.com/docs/reference/js/firebase.User
-          // console.log(JSON.stringify(user));
-          let svg = createAvatar(style, {
-              seed: user.uid,
-          })
-          const svgsrc = `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
-          if (user.displayName === null){
-            dispatch({
-              type:"SET_USER",
-              user: {...user, photoURL: svgsrc, displayName : "anonymous"}
-            });
-          }
-          else {
+          // get user details from firebase. If dont exist generate new
+          const userRef = doc(db, "users", user.uid);
+          const userSnap = await getDoc(userRef);
+
+          if(userSnap.exists()) {
             dispatch({
               type: "SET_USER",
-              user: {...user, photoURL: svgsrc},
+              user: {...user, photoURL: userSnap.data().photoURL, displayName: userSnap.data().name},
             });
+          }
+
+          else {
+            //user doesnt exist make new
+            //make new avatar
+            let svg = createAvatar(style, {
+                seed: user.uid,
+            })
+            const svgsrc = `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+
+            //if anonymously logged in
+            if (user.displayName === null){
+              dispatch({
+                type:"SET_USER",
+                user: {...user, photoURL: svgsrc, displayName : "anonymous"}
+              });
+            }
+            
+            // if logged in with Facebook, Google
+            else {
+              dispatch({
+                type: "SET_USER",
+                user: {...user, photoURL: svgsrc},
+              });
+            }
+
           }
           // ...
         } else {

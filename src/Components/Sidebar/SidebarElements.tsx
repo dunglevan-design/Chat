@@ -75,7 +75,7 @@ export const SidebarMenu = styled(motion.ul)`
   display: flex;
   flex-direction: column;
   position: absolute;
-  top: 35%;
+  top: 45%;
   width: 100%;
 `;
 export const SidebarMenuitem = styled(motion.li)`
