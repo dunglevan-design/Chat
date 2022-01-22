@@ -4,7 +4,6 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Redirect,
 } from "react-router-dom";
 import Sidebar from "./Components/Sidebar/Sidebar";
 import { useContext, useState } from "react";
@@ -12,13 +11,11 @@ import { context } from "./Globals/GlobalStateProvider";
 import Login from "./Components/Authentication/Login";
 import { User } from "../node_modules/firebase/auth/dist/auth";
 import Chatpage from "./Components/Pages/Chatpage/Chatpage";
-import Notificationspage from "./Components/Pages/Notifications";
 import Profilepage from "./Components/Pages/Profile";
 import Homepage from "./Components/Pages/Homepage";
 import VideoChatRoom from "./Components/VideoChat/VideoChatRoom";
 import { updateDoc, doc, getDoc } from "firebase/firestore";
 import { db, messaging } from "./firebase";
-import Notification from "./Components/Notification/Notification";
 
 function App() {
   const [isopen, setIsopen] = useState(true);
@@ -74,7 +71,6 @@ function App() {
               <Chatpage StartVideocall={StartVideocall} />
             </Route>
             <Route path="/notifications">
-              <Notificationspage />
             </Route>
             <Route path="/profile">
               <Profilepage />

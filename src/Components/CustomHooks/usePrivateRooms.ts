@@ -16,7 +16,7 @@ import { room } from "../Algolia/Algolia";
 export const usePrivateRooms = (userid: string) => {
   const [privaterooms, setprivaterooms] = useState<room[]>([]);
 
-  let unsubscribe2:Unsubscribe;
+  let unsubscribe2:Unsubscribe = () => console.log("placeholder function, nothing to unsubscribe from");
 
   //get a list of all private rooms and listen to change on that room
   useEffect(() => {
